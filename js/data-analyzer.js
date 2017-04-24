@@ -84,7 +84,7 @@ function labelMissed(jsonWorkbookArray, missedDurationRule, inclusive) {
     var entry;
     for (var i = 0; i < jsonWorkbookArray.length; i++) {
         entry = jsonWorkbookArray[i];
-        if (entry.Direction == "IN") {
+        if (entry.Direction == "IN" && entry.Duration != 0) {
           var duration = entry.Duration;
           if (duration != undefined) { // Duration exists
               if (duration < missedDurationRule) {
@@ -102,6 +102,8 @@ function labelMissed(jsonWorkbookArray, missedDurationRule, inclusive) {
         }
     }
 }
+
+
 
 /**
 Convert the given month number to its corresponding month string. Input ranges
