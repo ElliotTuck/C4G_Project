@@ -134,6 +134,7 @@ following format:
 [
     {
         "month": "January",
+        "year": 2016,
         "numCallsTotal": 555,
         "numMissedCalls", 100,
         "numMadeCalls", 455
@@ -141,6 +142,7 @@ following format:
 
     {
         "month": "February",
+        "year": 2017,
         "numCallsTotal": 0,
         "numMissedCalls", 0,
         "numMadeCalls", 0
@@ -149,33 +151,46 @@ following format:
     ...
 ]
 
-This array will be of size 12, with one entry per month of the year.
+This array will be of size 12 * (number of years), with one entry per unique month.
+For example, if there is two years worth of data, then this will return an array of
+size 24.
 Note: It might make sense to edit this function to specify which
 months should be analyzed based on the user's input.
 **/
-function getCallDataPerMonth(jsonWorkbookEntries) {
+function getCallDataPerMonth(jsonWorkbookEntries, years) {
     // array of objects
     var callDataPerMonth = [];
 
-    // create initial objects
-    for (var i = 0; i < 12; i++) {
-        var obj = new Object();
-        obj.month = convertMonth(i);
-        obj.numCallsTotal = 0;
-        obj.numMissedCalls = 0;
-        obj.numMadeCalls = 0;
-        callDataPerMonth.push(obj);
+    // create array of months for each year of data
+    for (var j = 0; j < years.length; j++) {
+        // initialize each month's aggregate data
+        for (var i = 0; i < 12; i++) {
+            var obj = new Object();
+            obj.month = convertMonth(i);
+            obj.year = years[j];
+            obj.numCallsTotal = 0;
+            obj.numMissedCalls = 0;
+            obj.numMadeCalls = 0;
+            callDataPerMonth.push(obj);
+        }
     }
 
     // aggregate the call data
-    for (var i = 0; i < jsonWorkbookEntries.length; i++) {
-        var entry = jsonWorkbookEntries[i];
-        var entryMonth = entry.Date.getMonth();
-        callDataPerMonth[entryMonth].numCallsTotal++;        // increment the total number of calls by one
-        if (entry.Missed) {
-            callDataPerMonth[entryMonth].numMissedCalls++;   // if the call was missed, increment total number of missed calls
-        } else {
-            callDataPerMonth[entryMonth].numMadeCalls++;     // else increment total number of made calls
+    for (var j = 0; j < years.length; j++) {
+        for (var i = 0; i < jsonWorkbookEntries.length; i++) {
+            var entry = jsonWorkbookEntries[i];
+            var entryMonth = entry.Date.getMonth();
+            var entryYear = entry.Date.getFullYear();
+            // only add the proper data to each entry of the array
+            if (entryYear == years[j]) {
+                var index = 12 * j + entryMonth;
+                callDataPerMonth[index].numCallsTotal++;        // increment the total number of calls by one
+                if (entry.Missed) {
+                    callDataPerMonth[index].numMissedCalls++;   // if the call was missed, increment total number of missed calls
+                } else {
+                    callDataPerMonth[index].numMadeCalls++;     // else increment total number of made calls
+                }
+            }
         }
     }
 

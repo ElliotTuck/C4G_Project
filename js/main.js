@@ -38,7 +38,9 @@ $(document).ready(function() {
 			    .text("Date of first entry: " + e1String);
 
 			// get the call data per month
-			var callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries);
+			// Note: the [2016, 2017] array is a dummy array to test functionality
+			var callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, [2016, 2017]);
+			console.log(callDataPerMonth);
 
 			// visualize the data at a high level
 			visualizeHighLevel(callDataPerMonth, jsonWorkbookEntries);
