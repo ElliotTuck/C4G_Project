@@ -1,0 +1,92 @@
+body {
+	font-family: 'Noto Sans', sans-serif;
+	background-color: #F2F2F2;
+	margin: 3em;
+}
+
+h1 { 
+	text-indent: 30px; 
+}
+
+hr {
+    height: 3px;
+    border: 0;
+    border-top: 2px solid black;
+    margin: 2em 0;
+    padding: 0;
+}
+
+#drop-area {
+	width: auto;
+	height: 200px;
+	line-height: 200px;
+	border: 2px solid black;
+	background-color: lightgray;
+	color: black;
+	font-size: 20px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+#options {  }
+
+#options div {
+	float: left;
+}
+
+#months-options {
+	width: 30%;
+}
+
+#months-title {
+	padding-left: 25%;
+	padding-right: 75%;
+}
+
+#months-form {
+	text-align: left;
+}
+
+#left-months, #right-months {
+	width: 50%;
+	font-family: 'Ubuntu Mono', monospace;
+	font-size: 20px;
+}
+
+#months-options, #custom-date-range-options {
+	width: 50%;
+}
+
+#start-date {
+	margin-right: 20px
+}
+
+.newdiv { clear: both; }
+
+.right-align { text-align: right; }
+
+#submit-btn {
+	color: white;
+	background-color: purple;
+	padding: 5px;
+	text-decoration: none;
+}
+
+#submit-btn:active {
+	background-color: MediumOrchid;
+}
+
+#visualization {
+	display: none;
+	padding: 30px;
+}
+
+/* Visualization styling */
+
+.made-call-bar {
+	fill: green;
+}
+
+.missed-call-bar {
+	fill: red;
+}
