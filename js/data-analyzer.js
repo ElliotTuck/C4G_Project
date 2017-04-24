@@ -84,19 +84,21 @@ function labelMissed(jsonWorkbookArray, missedDurationRule, inclusive) {
     var entry;
     for (var i = 0; i < jsonWorkbookArray.length; i++) {
         entry = jsonWorkbookArray[i];
-        var duration = entry.Duration;
-        if (duration != undefined) { // Duration exists
-            if (duration < missedDurationRule) {
-                entry.Missed = true;
-            } else if (duration > missedDurationRule) {
-                entry.Missed = false;
-            } else { // duration == missedDurationRule
-                if (inclusive) {
-                    entry.Missed = true;
-                } else {
-                    entry.Missed = false;
-                }
-            }
+        if (entry.Direction == "IN") {
+          var duration = entry.Duration;
+          if (duration != undefined) { // Duration exists
+              if (duration < missedDurationRule) {
+                  entry.Missed = true;
+              } else if (duration > missedDurationRule) {
+                  entry.Missed = false;
+              } else { // duration == missedDurationRule
+                  if (inclusive) {
+                      entry.Missed = true;
+                  } else {
+                      entry.Missed = false;
+                  }
+              }
+          }
         }
     }
 }
@@ -150,7 +152,7 @@ following format:
 This array will be of size 12 * (number of years), with one entry per unique month.
 For example, if there is two years worth of data, then this will return an array of
 size 24.
-Note: It might make sense to edit this function to specify which 
+Note: It might make sense to edit this function to specify which
 months should be analyzed based on the user's input.
 **/
 function getCallDataPerMonth(jsonWorkbookEntries, years) {
@@ -194,7 +196,7 @@ function getCallDataPerMonth(jsonWorkbookEntries, years) {
 }
 
 /**
-Get total number of made/missed calls per day for a given month. Return array 
+Get total number of made/missed calls per day for a given month. Return array
 of objects in the following format:
 
 [
