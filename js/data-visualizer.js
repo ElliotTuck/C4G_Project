@@ -1,6 +1,6 @@
 // Create a bar chart showing the number of made/missed calls per month.
 // Display the chart at the bottom of the page.
-function visualizeHighLevel(callDataPerMonth, jsonWorkbookEntries) {
+function visualizeHighLevel(callDataPerMonth, jsonWorkbookEntries, years) {
 	var width = window.innerWidth - 20,
 		height = window.innerHeight / 2,
 		barpadding = 1,
@@ -14,7 +14,8 @@ function visualizeHighLevel(callDataPerMonth, jsonWorkbookEntries) {
 		svg = d3.select("body")
 				.append("svg")
 				  .attr("width", width)
-				  .attr("height", height);
+				  .attr("height", height),
+		expanded = false;
 
 	// bind the data to screen elements
 	var gEnter = svg.selectAll("g")
@@ -22,14 +23,21 @@ function visualizeHighLevel(callDataPerMonth, jsonWorkbookEntries) {
 				    .enter()
 				    .append("g")
 				    .on("click", function(d, i) {
-				    	// get the call data for the selected month
-				    	var callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, i);
+				    	if (!expanded) {
+				    		// convert i to a month index [0, 11]
+				    		i %= 12;
 
-				    	// show a low-level view of the call data for the selected month
-				    	visualizeLowLevel(callDataPerDay, jsonWorkbookEntries);
+					    	// get the call data for the selected month
+					    	var callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, i, years);
 
-				    	// scroll to the bottom of the page
-						$("body").delay(100).animate({ scrollTop: $(document).height()-$(window).height() }, 750);
+					    	// show a low-level view of the call data for the selected month
+					    	visualizeLowLevel(callDataPerDay, jsonWorkbookEntries);
+
+					    	// scroll to the bottom of the page
+							$("body").delay(100).animate({ scrollTop: $(document).height()-$(window).height() }, 750);
+
+							expanded = true;
+						}
 				    });
 
 	// create bars

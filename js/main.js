@@ -4,9 +4,11 @@ var file;
 var workbook;
 
 $(document).ready(function() {
+	var expanded = false;
+
 	// toggle the visualization upon clicking the submit button
 	$("#submit-btn").click(function() {
-		if (workbook) {
+		if (workbook && !expanded) {
 			// convert workbook to JSON
 			var json_workbook = to_json(workbook);
 
@@ -39,19 +41,22 @@ $(document).ready(function() {
 
 			// get the call data per month
 			// Note: the [2016, 2017] array is a dummy array to test functionality
-			var callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, [2016, 2017]);
+			var years = [2016, 2017];
+			var callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, years);
 			console.log(callDataPerMonth);
 
 			// visualize the data at a high level
-			visualizeHighLevel(callDataPerMonth, jsonWorkbookEntries);
+			visualizeHighLevel(callDataPerMonth, jsonWorkbookEntries, years);
 
 			// get the call data per day
 			var month = 1;   // explicitly check the month of February
-			var callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, month);
+			var callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, month, years);
 
 			// scroll to the bottom of the page
 			$("body").delay(100).animate({ scrollTop: $(document).height()-$(window).height() }, 750);
-		} else {
+
+			expanded = true;
+		} else if (!expanded) {
 			alert("No file selected!");
 		}
 	});
