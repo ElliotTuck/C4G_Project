@@ -1,8 +1,6 @@
 // Create a bar chart showing the number of made/missed calls per month.
 // Display the chart at the bottom of the page.
 function visualizeHighLevel(callDataPerMonth, jsonWorkbookEntries) {
-	console.log(callDataPerMonth);
-
 	var width = window.innerWidth - 20,
 		height = window.innerHeight / 2,
 		barpadding = 1,
@@ -72,8 +70,6 @@ function visualizeHighLevel(callDataPerMonth, jsonWorkbookEntries) {
 // Create a bar chart showing the number of made/missed calls per day in a given month.
 // Display the chart at the bottom of the page, beneath any other charts.
 function visualizeLowLevel(callDataPerDay, jsonWorkbookEntries) {
-	console.log(callDataPerDay);
-
 	var width = window.innerWidth - 20,
 		height = window.innerHeight / 2,
 		barpadding = 1,
