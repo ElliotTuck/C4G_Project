@@ -15,7 +15,7 @@ $(document).ready(function() {
 			var sheetName = workbook.SheetNames[0];
 			var jsonWorkbookEntries = json_workbook[sheetName];
 			cleanJSONWorkbook(jsonWorkbookEntries);
-			labelMissed(jsonWorkbookEntries, 40, false);
+			labelMissed(jsonWorkbookEntries, 40, false); // 40 seconds
 			var missedCounter = 0;
 			var i = 0;
 			for (var int = 0; i < jsonWorkbookEntries.length; i++) {
