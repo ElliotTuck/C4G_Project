@@ -1,7 +1,7 @@
-// the file to be processed
-var file;
-// the workbook
-var workbook;
+var file;                           // the file to be processed
+var workbook;                       // the workbook
+var defaultDropColor = "#bc0033"    // default color of drop-area
+var highlightedDropColor = "gray"   // color of drop-area when a file is being dragged over it
 
 $(document).ready(function() {
 	var expanded = false;
@@ -79,13 +79,13 @@ var dropListener = {
 	onDragEnter: function(event) {
 		event.stopPropagation();
 		event.preventDefault();
-		event.currentTarget.style.backgroundColor = "purple";
+		event.currentTarget.style.backgroundColor = highlightedDropColor;
 	},
 
 	onDragExit: function(event) {
 		event.stopPropagation();
 		event.preventDefault();
-		event.currentTarget.style.backgroundColor = "lightgray";
+		event.currentTarget.style.backgroundColor = defaultDropColor;
 	},
 
 	onDragOver: function(event) {
@@ -97,7 +97,7 @@ var dropListener = {
 	onDragDrop: function(event) {
 		event.stopPropagation();
 		event.preventDefault();
-		event.currentTarget.style.backgroundColor = "lightgray";
+		event.currentTarget.style.backgroundColor = defaultDropColor;
 		$("#list")[0].innerHTML = "<strong>Loading file...</strong>";
 
 		file = event.dataTransfer.files[0];   // File object
