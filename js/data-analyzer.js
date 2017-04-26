@@ -216,6 +216,8 @@ of objects in the following format:
 [
     {
         "day": 1,
+        "month": 1,
+        "year": 2017,
         "numCallsTotal": 100,
         "numMissedCalls": 10,
         "numMadeCalls": 90
@@ -223,6 +225,8 @@ of objects in the following format:
 
     {
         "day": 2,
+        "month": 1,
+        "year"; 2017,
         "numCallsTotal": 0,
         "numMissedCalls": 0,
         "numMadeCalls": 0
@@ -231,20 +235,25 @@ of objects in the following format:
     ...
 ]
 
-This array will be of variable size depending on the particular month in question.
+This array will be of variable size depending on the years of data. For example,
+if years = [2016, 2017], then this array will be of size 62 (= 2 years * 31 days per month).
 **/
 function getCallDataPerDay(jsonWorkbookEntries, month) {
     // array of objects
     var callDataPerDay = [];
 
     // create initial objects (assumes 31 days for each month)
-    for (var i = 0; i < 31; i++) {
-        var obj = new Object();
-        obj.day = i + 1;
-        obj.numCallsTotal = 0;
-        obj.numMissedCalls = 0;
-        obj.numMadeCalls = 0;
-        callDataPerDay.push(obj);
+    for (var j = 0; j < years.length; j++) {
+        for (var i = 0; i < 31; i++) {
+            var obj = new Object();
+            obj.day = i + 1;
+            obj.month = month;
+            obj.year = years[j];
+            obj.numCallsTotal = 0;
+            obj.numMissedCalls = 0;
+            obj.numMadeCalls = 0;
+            callDataPerDay.push(obj);
+        }
     }
 
     // aggregate call data
@@ -264,4 +273,69 @@ function getCallDataPerDay(jsonWorkbookEntries, month) {
     }
 
     return callDataPerDay;
+}
+
+/**
+Get total number of made/missed calls per day for a given day in a given month 
+over all years of data. Return array of objects in the following format:
+
+[
+    {
+        "hour": 0,
+        "numCallsTotal": 7,
+        "numMissedCalls": 1,
+        "numMadeCalls": 6
+    },
+
+    {
+        "hour": 1,
+        "numCallsTotal": 0,
+        "numMissedCalls": 0,
+        "numMadeCalls": 0
+    },
+
+    ...
+]
+
+This array will be of variable size depending on the years of data. For example,
+if years = [2016, 2017], then this array will be of size 48 (= 2 years * 24 hours in a day).
+**/
+function getCallDataPerHour(jsonWorkbookEntries, month, date, years) {
+    // array of objects
+    var callDataPerHour = [];
+
+    // create initial objects
+    for (var i = 0; i < years.length; i++) {
+        for (var j = 0; j < 24; j++) {
+            var obj = new Object();
+            obj.hour = j;
+            obj.numCallsTotal = 0;
+            obj.numMissedCalls = 0;
+            obj.numMadeCalls = 0;
+            callDataPerHour.push(obj);
+        }
+    }
+
+    // aggregate call data
+    for (var i = 0; i < years.length; i++) {
+        for (var j = 0; j < jsonWorkbookEntries.length; j++) {
+            var entry = jsonWorkbookEntries[j];
+            var entryDate = entry.Date.getDate() - 1;
+            var entryMonth = entry.Date.getMonth();
+            var entryYear = entry.Date.getFullYear();
+            if (entryDate === date && entryMonth === month && entryYear === years[i]) {
+                var entryHour = entry.Date.getHours();
+                var index = 24 * i + entryHour;
+                var callObj = callDataPerHour[index];
+                callObj.numCallsTotal++;        // increment total number of calls on this day by one
+                if (entry.Missed) {
+                    callObj.numMissedCalls++;   // if call was missed, increment total number of missed calls
+                } else {
+                    callObj.numMadeCalls++;     // else increment total number of made calls
+                }
+            }
+        }
+    }
+
+    return callDataPerHour;
 }
