@@ -238,7 +238,7 @@ of objects in the following format:
 This array will be of variable size depending on the years of data. For example,
 if years = [2016, 2017], then this array will be of size 62 (= 2 years * 31 days per month).
 **/
-function getCallDataPerDay(jsonWorkbookEntries, month) {
+function getCallDataPerDay(jsonWorkbookEntries, month, years) {
     // array of objects
     var callDataPerDay = [];
 
