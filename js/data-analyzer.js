@@ -100,9 +100,7 @@ function labelMissed(jsonWorkbookArray, missedDurationRule, inclusive) {
               }
           }
         } else {
-          if (entry.Duration <= 0) {
             delete jsonWorkbookArray[i];
-          }
         }
     }
 }
