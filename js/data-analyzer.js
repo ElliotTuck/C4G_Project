@@ -202,6 +202,9 @@ function getCallDataPerMonth(jsonWorkbookEntries, years) {
 function getActiveMonths(jsonWorkbookEntries) {
   var monthArray = [];
   var entry;
+  for (var i = 0; i < 12; i++) { // Initialize all months to inactive
+    monthArray[i] = false;
+  }
   for (var i = 0; i < jsonWorkbookEntries.length; i++) {
     entry = jsonWorkbookEntries[i];
     monthArray[entry.Date.getMonth()] = true

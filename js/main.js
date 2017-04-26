@@ -2,19 +2,17 @@ var file;                           // the file to be processed
 var workbook;                       // the workbook
 var defaultDropColor = "#bc0033"    // default color of drop-area
 var highlightedDropColor = "gray"   // color of drop-area when a file is being dragged over it
+var jsonWorkbookEntries;
 
 $(document).ready(function() {
 	var expanded = false;
 
 	// toggle the visualization upon clicking the submit button
 	$("#submit-btn").click(function() {
-		if (workbook && !expanded) {
+		if (jsonWorkbookEntries && !expanded) {
 			// convert workbook to JSON
-			var json_workbook = to_json(workbook);
 
-			var sheetName = workbook.SheetNames[0];
-			var jsonWorkbookEntries = json_workbook[sheetName];
-			cleanJSONWorkbook(jsonWorkbookEntries);
+
 			labelMissed(jsonWorkbookEntries, 40, false); // 40 seconds
 			var missedCounter = 0;
 			var i = 0;
@@ -112,7 +110,18 @@ var dropListener = {
 		var reader = new FileReader();
 	    var name = file.name;
 	    reader.onload = function(event) {
-			workbook = XLSX.read(event.target.result, {type: 'binary'});
+				workbook = XLSX.read(event.target.result, {type: 'binary'});
+				var json_workbook = to_json(workbook);
+				var sheetName = workbook.SheetNames[0];
+				jsonWorkbookEntries = json_workbook[sheetName]; // Init main array of JSON call objects
+				cleanJSONWorkbook(jsonWorkbookEntries); // clean the data
+				var activeMonths = getActiveMonths(jsonWorkbookEntries);
+				for (var i = 0; i < activeMonths.length; i++) {
+					if (!activeMonths[i]) {
+						var monthName = convertMonth(i);
+						$("#" + monthName).attr("disabled", true)
+					}
+				}
 	    };
 	    reader.readAsBinaryString(file);
 	}
