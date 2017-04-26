@@ -230,7 +230,8 @@ of objects in the following format:
         "year": 2017,
         "numCallsTotal": 100,
         "numMissedCalls": 10,
-        "numMadeCalls": 90
+        "numMadeCalls": 90,
+        "expanded": false
     },
 
     {
@@ -239,7 +240,8 @@ of objects in the following format:
         "year"; 2017,
         "numCallsTotal": 0,
         "numMissedCalls": 0,
-        "numMadeCalls": 0
+        "numMadeCalls": 0,
+        "expanded": true
     },
 
     ...
@@ -262,6 +264,7 @@ function getCallDataPerDay(jsonWorkbookEntries, month, years) {
             obj.numCallsTotal = 0;
             obj.numMissedCalls = 0;
             obj.numMadeCalls = 0;
+            obj.expanded = false;
             callDataPerDay.push(obj);
         }
     }
