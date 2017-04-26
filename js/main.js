@@ -41,7 +41,7 @@ $(document).ready(function() {
 
 			// get the call data per month
 			// Note: the [2016, 2017] array is a dummy array to test functionality
-			var years = [2016, 2017];
+			var years = [2017];
 			var callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, years);
 			console.log(callDataPerMonth);
 
