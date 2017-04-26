@@ -202,7 +202,7 @@ function getActiveMonths(jsonWorkbookEntries) {
   var entry;
   for (var i = 0; i < jsonWorkbookEntries.length; i++) {
     entry = jsonWorkbookEntries[i];
-    monthArray[entry.Date.getMonth()] = 1
+    monthArray[entry.Date.getMonth()] = true
   }
   return monthArray;
 }
