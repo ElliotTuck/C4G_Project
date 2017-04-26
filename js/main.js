@@ -3,7 +3,7 @@ var workbook;                       // the workbook
 var defaultDropColor = "#bc0033"    // default color of drop-area
 var highlightedDropColor = "gray"   // color of drop-area when a file is being dragged over it
 var jsonWorkbookEntries;
-
+var checkedMonths;
 $(document).ready(function() {
 	var expanded = false;
 
@@ -96,20 +96,17 @@ var dropListener = {
 		event.stopPropagation();
 		event.preventDefault();
 		event.currentTarget.style.backgroundColor = defaultDropColor;
-		$("#list")[0].innerHTML = "<strong>Loading file...</strong>";
 
 		file = event.dataTransfer.files[0];   // File object
 
 		// indicate that file has loaded by displaying its properties on the page
-		name_li = "<li><strong>Name: " + file.name + "</strong></li>";
-		type_li = "<li><strong>Type: " + file.type + "</strong</li>";
-		size_li = "<li><strong>Size: " + file.size + " bytes</strong></li>";
-		$("#list")[0].innerHTML = "<ul>" + name_li + type_li + size_li + "</ul>";
+
 
 		// read the file
 		var reader = new FileReader();
 	    var name = file.name;
 	    reader.onload = function(event) {
+				$("#list")[0].innerHTML = "<strong>Loading file...</strong>";
 				workbook = XLSX.read(event.target.result, {type: 'binary'});
 				var json_workbook = to_json(workbook);
 				var sheetName = workbook.SheetNames[0];
@@ -122,6 +119,21 @@ var dropListener = {
 						$("#" + monthName).attr("disabled", true)
 					}
 				}
+				checkedMonths = activeMonths;
+				jsonWorkbookEntries = sortByDate(jsonWorkbookEntries);
+				var minDate = dateToDashString(jsonWorkbookEntries[0].Date);
+				var maxDate = dateToDashString(jsonWorkbookEntries[jsonWorkbookEntries.length - 1].Date);
+
+				console.debug(minDate);
+				console.debug(maxDate);
+				$("#start-calendar").attr("min", minDate);
+				$("#start-calendar").attr("max", maxDate);
+				$("#end-calendar").attr("min", minDate);
+				$("#end-calendar").attr("max", maxDate);
+				name_li = "<li><strong>Name: " + file.name + "</strong></li>";
+				type_li = "<li><strong>Type: " + file.type + "</strong</li>";
+				size_li = "<li><strong>Size: " + file.size + " bytes</strong></li>";
+				$("#list")[0].innerHTML = "<ul>" + name_li + type_li + size_li + "</ul>";
 	    };
 	    reader.readAsBinaryString(file);
 	}
@@ -144,4 +156,18 @@ function to_json(workbook) {
         }
     });
     return result;
+}
+
+function dateToDashString(date) {
+	var day = date.getDate();
+	var month = date.getMonth() + 1;
+	var year = date.getFullYear();
+	if (day < 10) {
+		day = "0" + day
+	}
+	if (month < 10) {
+		month = "0" + month;
+	}
+	var dateString = year + "-" + month + "-" + day;
+	return dateString;
 }
