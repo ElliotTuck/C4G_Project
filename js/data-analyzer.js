@@ -84,7 +84,7 @@ function labelMissed(jsonWorkbookArray, missedDurationRule, inclusive) {
     var entry;
     for (var i = 0; i < jsonWorkbookArray.length; i++) {
         entry = jsonWorkbookArray[i];
-        if (entry.Direction == "IN" && entry.Duration >= 0) {
+        if (entry.Direction == "IN" && entry.Duration > 1) {
           var duration = entry.Duration;
           if (duration != undefined) { // Duration exists
               if (duration < missedDurationRule) {
