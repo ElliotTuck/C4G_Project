@@ -14,25 +14,24 @@ function visualizeHighLevel(callDataPerMonth, jsonWorkbookEntries, years) {
 	/* Useful variables. */
 	/*********************/
 
-	// The width of SVG element to be created.
+	// The width of SVG element.
 	var width = window.innerWidth - 100;
-	// The height of the SVG element to be created.
+	// The height of the SVG element.
 	var	height = window.innerHeight / 2;
 	// The maximum number of calls for any month in callDataPerMonth.
 	var	maxCalls = d3.max(callDataPerMonth, function(d) { return d.numCallsTotal; });
 	// A quantitative scale that maps call quantity to on-screen bar height.
 	var	heightScale = d3.scale.linear()
-				  			  .domain([0, maxCalls])
-				  			  .range([0, height]);
+		.domain([0, maxCalls])
+		.range([0, height]);
 	// An ordinal scale that maps entries in callDataPerMonth to horizontal on-screen locations.
 	var	xScale = d3.scale.ordinal()
-						 .domain(d3.range(callDataPerMonth.length))
-						 .rangeRoundBands([0, width], 0.05);
-	// The new SVG element.
-	var	svg = d3.select("body")
-				.append("svg")
-				  .attr("width", width)
-				  .attr("height", height);
+		.domain(d3.range(callDataPerMonth.length))
+		.rangeRoundBands([0, width], 0.05);
+	// The SVG element for high-level visualizations.
+	var	svg = d3.select("#svg-high-level")
+		.attr("width", width)
+		.attr("height", height);
 	// A boolean describing whether or not a lower-level chart has been displayed.
 	var	expanded = false;
 
@@ -125,25 +124,24 @@ function visualizeMidLevel(callDataPerDay, jsonWorkbookEntries, years) {
 	/* Useful variables. */
 	/*********************/
 
-	// The width of the SVG element to be created.
+	// The width of the SVG element.
 	var width = window.innerWidth - 100;
-	// The height of the SVG element to be created.
+	// The height of the SVG element.
 	var	height = window.innerHeight / 2;
 	// The maximum number of calls for any day in callDataPerDay.
 	var	maxCalls = d3.max(callDataPerDay, function(d) { return d.numCallsTotal; });
 	// A quantitative scale that maps call quantity to on-screen bar height.
 	var	heightScale = d3.scale.linear()
-				  			  .domain([0, maxCalls])
-				  			  .range([0, height]);
+		.domain([0, maxCalls])
+		.range([0, height]);
 	// An ordinal scale that maps entries in callDataPerDay to horizontal on-screen locations.
 	var	xScale = d3.scale.ordinal()
-						 .domain(d3.range(callDataPerDay.length))
-						 .rangeRoundBands([0, width], 0.05);
-	// The new SVG element.
-	var	svg = d3.select("body")
-				.append("svg")
-				  .attr("width", width)
-				  .attr("height", height);
+		.domain(d3.range(callDataPerDay.length))
+		.rangeRoundBands([0, width], 0.05);
+	// The SVG element for mid-level visualizations.
+	var	svg = d3.select("#svg-mid-level")
+		.attr("width", width)
+		.attr("height", height);
 
 	/***********************/
 	/* Visualize the data. */
@@ -185,7 +183,13 @@ function visualizeMidLevel(callDataPerDay, jsonWorkbookEntries, years) {
 				if (expanded) {
 					// delete the visualization (and any others below it)
 					d3.select("#svg-low-level")
+					  .selectAll("g")
 						.remove();
+					d3.select("#svg-low-level")
+						.transition()
+						.duration(1000)
+						.attr("width", 0)
+						.attr("height", 0);
 
 					// lower-level visualization for this month has been removed
 					d.expanded = false;
@@ -291,9 +295,9 @@ function visualizeLowLevel(callDataPerHour, jsonWorkbookEntries) {
 	/* Useful variables. */
 	/*********************/
 
-	// The width of the SVG element to be created.
+	// The width of the SVG element.
 	var width = window.innerWidth - 100;
-	// The height of the SVG element to be created.
+	// The height of the SVG element.
 	var	height = window.innerHeight / 2;
 	// Display padding for the horizontal scale.
 	var	scalePadding = 25;
@@ -303,18 +307,16 @@ function visualizeLowLevel(callDataPerHour, jsonWorkbookEntries) {
 	var	maxCalls = d3.max(callDataPerHour, function(d) { return d.numCallsTotal; });
 	// A quantitative scale that maps call quantity to on-screen bar height.
 	var	heightScale = d3.scale.linear()
-				  			  .domain([0, maxCalls])
-				  			  .range([0, height - scalePadding]);
+		.domain([0, maxCalls])
+		.range([0, height - scalePadding]);
 	// An ordinal scale that maps entries in callDataPerDay to horizontal on-screen locations.
 	var	xScale = d3.scale.ordinal()
-						 .domain(d3.range(callDataPerHour.length))
-						 .rangeRoundBands([0, width], 0.05);
-	// The new SVG element.
-	var	svg = d3.select("body")
-				.append("svg")
-				  .attr("id", "svg-low-level")
-				  .attr("width", width)
-				  .attr("height", height);
+		.domain(d3.range(callDataPerHour.length))
+		.rangeRoundBands([0, width], 0.05);
+	// The SVG element for low-level visualizations.
+	var	svg = d3.select("#svg-low-level")
+		.attr("width", width)
+		.attr("height", height);
 
 	/***********************/
 	/* Visualize the data. */
@@ -323,9 +325,9 @@ function visualizeLowLevel(callDataPerHour, jsonWorkbookEntries) {
 	// bind the data to new DOM elements (initially an empty selection of DOM elements, 
 	// as no prior visualization has been performed)
 	var gEnter = svg.selectAll("g")
-				    .data(callDataPerHour)
-				    .enter()
-				    .append("g");
+		.data(callDataPerHour)
+		.enter()
+		.append("g");
 
 	/* create bars */
 

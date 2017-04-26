@@ -23,7 +23,7 @@ $(document).ready(function() {
 			}
 
 			// display total number of missed calls
-			d3.select("body")
+			d3.select("#initial-info")
 			  .append("h1")
 			    .text("Number of missed calls in this data: " + missedCounter);
 
@@ -33,7 +33,7 @@ $(document).ready(function() {
 			var e1Month = convertMonth(e1.Date.getMonth());
 			var e1Year = e1.Date.getFullYear();
 			var e1String = e1Date + " " + e1Month + " " + e1Year;
-			d3.select("body")
+			d3.select("#initial-info")
 			  .append("h1")
 			    .text("Date of first entry: " + e1String);
 
@@ -106,34 +106,34 @@ var dropListener = {
 		var reader = new FileReader();
 	    var name = file.name;
 	    reader.onload = function(event) {
-				$("#list")[0].innerHTML = "<strong>Loading file...</strong>";
-				workbook = XLSX.read(event.target.result, {type: 'binary'});
-				var json_workbook = to_json(workbook);
-				var sheetName = workbook.SheetNames[0];
-				jsonWorkbookEntries = json_workbook[sheetName]; // Init main array of JSON call objects
-				cleanJSONWorkbook(jsonWorkbookEntries); // clean the data
-				var activeMonths = getActiveMonths(jsonWorkbookEntries);
-				for (var i = 0; i < activeMonths.length; i++) {
-					if (!activeMonths[i]) {
-						var monthName = convertMonth(i);
-						$("#" + monthName).attr("disabled", true)
-					}
+			$("#list")[0].innerHTML = "<strong>Loading file...</strong>";
+			workbook = XLSX.read(event.target.result, {type: 'binary'});
+			var json_workbook = to_json(workbook);
+			var sheetName = workbook.SheetNames[0];
+			jsonWorkbookEntries = json_workbook[sheetName]; // Init main array of JSON call objects
+			cleanJSONWorkbook(jsonWorkbookEntries); // clean the data
+			var activeMonths = getActiveMonths(jsonWorkbookEntries);
+			for (var i = 0; i < activeMonths.length; i++) {
+				if (!activeMonths[i]) {
+					var monthName = convertMonth(i);
+					$("#" + monthName).attr("disabled", true)
 				}
-				checkedMonths = activeMonths;
-				jsonWorkbookEntries = sortByDate(jsonWorkbookEntries);
-				var minDate = dateToDashString(jsonWorkbookEntries[0].Date);
-				var maxDate = dateToDashString(jsonWorkbookEntries[jsonWorkbookEntries.length - 1].Date);
+			}
+			checkedMonths = activeMonths;
+			jsonWorkbookEntries = sortByDate(jsonWorkbookEntries);
+			var minDate = dateToDashString(jsonWorkbookEntries[0].Date);
+			var maxDate = dateToDashString(jsonWorkbookEntries[jsonWorkbookEntries.length - 1].Date);
 
-				console.debug(minDate);
-				console.debug(maxDate);
-				$("#start-calendar").attr("min", minDate);
-				$("#start-calendar").attr("max", maxDate);
-				$("#end-calendar").attr("min", minDate);
-				$("#end-calendar").attr("max", maxDate);
-				name_li = "<li><strong>Name: " + file.name + "</strong></li>";
-				type_li = "<li><strong>Type: " + file.type + "</strong</li>";
-				size_li = "<li><strong>Size: " + file.size + " bytes</strong></li>";
-				$("#list")[0].innerHTML = "<ul>" + name_li + type_li + size_li + "</ul>";
+			console.debug(minDate);
+			console.debug(maxDate);
+			$("#start-calendar").attr("min", minDate);
+			$("#start-calendar").attr("max", maxDate);
+			$("#end-calendar").attr("min", minDate);
+			$("#end-calendar").attr("max", maxDate);
+			name_li = "<li><strong>Name: " + file.name + "</strong></li>";
+			type_li = "<li><strong>Type: " + file.type + "</strong</li>";
+			size_li = "<li><strong>Size: " + file.size + " bytes</strong></li>";
+			$("#list")[0].innerHTML = "<ul>" + name_li + type_li + size_li + "</ul>";
 	    };
 	    reader.readAsBinaryString(file);
 	}
