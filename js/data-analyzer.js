@@ -212,6 +212,13 @@ function getActiveMonths(jsonWorkbookEntries) {
   return monthArray;
 }
 
+function sortByDate(jsonWorkbookEntries) {
+  jsonWorkbookEntries.sort(function (a, b) {
+    return a.Date - b.Date;
+  });
+  return jsonWorkbookEntries;
+}
+
 /**
 Get total number of made/missed calls per day for a given month. Return array
 of objects in the following format:
