@@ -117,6 +117,18 @@ function visualizeMidLevel(callDataPerDay, jsonWorkbookEntries, years) {
 							$("body").delay(100).animate({ scrollTop: $(document).height()-$(window).height() }, 750);
 
 							expanded = true;
+						} else {   // DOM elements already exists, just bind the new data to them
+							// the month of the callDataPerDay entry
+				    		var month = d.month;
+
+				    		// convert i to a day index [0, 30]
+				    		i %= 31;
+
+					    	// get the call data for the selected day
+					    	var callDataPerHour = getCallDataPerHour(jsonWorkbookEntries, month, i, years);
+
+					    	// revisualize the data
+					    	revisualizeLowLevel(callDataPerHour, jsonWorkbookEntries);
 						}
 				    });
 
@@ -192,6 +204,7 @@ function visualizeLowLevel(callDataPerHour, jsonWorkbookEntries) {
 						 .rangeRoundBands([0, width], 0.05),
 		svg = d3.select("body")
 				.append("svg")
+				  .attr("id", "svg-low-level")
 				  .attr("width", width)
 				  .attr("height", height);
 
@@ -212,7 +225,7 @@ function visualizeLowLevel(callDataPerHour, jsonWorkbookEntries) {
 		    .delay(function(d, i) { return 500 + (i / callDataPerHour.length) * 1000; })
 		    .duration(500)
 		    .attr("y", function(d) { return height - heightScale(d.numMadeCalls); })
-		    .attr("height", function(d) { return heightScale(d.numMadeCalls); })
+		    .attr("height", function(d) { return heightScale(d.numMadeCalls); });
 
 	gEnter.append("rect")
 	        .attr("class", "missed-call-bar")
@@ -224,10 +237,11 @@ function visualizeLowLevel(callDataPerHour, jsonWorkbookEntries) {
 		    .delay(function(d, i) { return 500 + (i / callDataPerHour.length) * 1000; })
 		    .duration(500)
 	        .attr("y", function(d) { return height - heightScale(d.numMadeCalls) - heightScale(d.numMissedCalls); })
-	        .attr("height", function(d) { return heightScale(d.numMissedCalls); })
+	        .attr("height", function(d) { return heightScale(d.numMissedCalls); });
 
 	// create bar labels
 	gEnter.append("text")
+		  .attr("class", "made-call-bar-label")
 		  .text(function(d) { return d.numMadeCalls; })
 	      .attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; })
 	      .attr("y", height)
@@ -243,6 +257,7 @@ function visualizeLowLevel(callDataPerHour, jsonWorkbookEntries) {
 	      .style("opacity", function(d) { return d.numMadeCalls < 2 ? 0 : 1; });
 
 	gEnter.append("text")
+		  .attr("class", "missed-call-bar-label")
 		  .text(function(d) { return d.numMissedCalls; })
 	      .attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; })
 	      .attr("y", height)
@@ -253,6 +268,58 @@ function visualizeLowLevel(callDataPerHour, jsonWorkbookEntries) {
 	      .style("opacity", 0)
 	      .transition()
 	      .delay(function(d, i) { return 500 + (i / callDataPerHour.length) * 1000; })
+	      .duration(500)
+	      .attr("y", function(d) { return height - heightScale(d.numCallsTotal) + 13; })
+	      .style("opacity", function(d) { return d.numMissedCalls < 2 ? 0 : 1; });
+}
+
+// Revisualize the low-level data.
+function revisualizeLowLevel(callDataPerHour, jsonWorkbookEntries) {
+	var width = window.innerWidth - 100,
+		height = window.innerHeight / 2,
+		barpadding = 1,
+		maxCalls = d3.max(callDataPerHour, function(d) { return d.numCallsTotal; }),
+		heightScale = d3.scale.linear()
+				  			  .domain([0, maxCalls])
+				  			  .range([0, height]),
+		xScale = d3.scale.ordinal()
+						 .domain(d3.range(callDataPerHour.length))
+						 .rangeRoundBands([0, width], 0.05),
+		svg = d3.select("body")
+				.select("#svg-low-level");
+
+	// bind the new data to the old DOM elements
+	var gUpdate = svg.selectAll("g")
+				     .data(callDataPerHour);
+
+	// update bars
+	gUpdate.select(".made-call-bar")
+		  .transition()
+		  .delay(function(d, i) { return (i / callDataPerHour.length) * 1000; })
+		  .duration(500)
+		  .attr("y", function(d) { return height - heightScale(d.numMadeCalls); })
+		  .attr("height", function(d) { return heightScale(d.numMadeCalls); });
+
+	gUpdate.select(".missed-call-bar")
+		  .transition()
+		  .delay(function(d, i) { return (i / callDataPerHour.length) * 1000; })
+		  .duration(500)
+	      .attr("y", function(d) { return height - heightScale(d.numMadeCalls) - heightScale(d.numMissedCalls); })
+	      .attr("height", function(d) { return heightScale(d.numMissedCalls); });
+
+	// update bar labels
+	gUpdate.select(".made-call-bar-label")
+		  .text(function(d) { return d.numMadeCalls; })
+	      .transition()
+	      .delay(function(d, i) { return (i / callDataPerHour.length) * 1000; })
+	      .duration(500)
+	      .attr("y", function(d) { return height - heightScale(d.numMadeCalls) + 13; })
+	      .style("opacity", function(d) { return d.numMadeCalls < 2 ? 0 : 1; });
+
+	gUpdate.select(".missed-call-bar-label")
+		  .text(function(d) { return d.numMissedCalls; })
+	      .transition()
+	      .delay(function(d, i) { return (i / callDataPerHour.length) * 1000; })
 	      .duration(500)
 	      .attr("y", function(d) { return height - heightScale(d.numCallsTotal) + 13; })
 	      .style("opacity", function(d) { return d.numMissedCalls < 2 ? 0 : 1; });
