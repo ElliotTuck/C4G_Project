@@ -100,7 +100,7 @@ function labelMissed(jsonWorkbookArray, missedDurationRule, inclusive) {
               }
           }
         } else {
-            delete jsonWorkbookArray[i];
+            jsonWorkbookArray.splice(i, 1);
         }
     }
 }
@@ -276,7 +276,7 @@ function getCallDataPerDay(jsonWorkbookEntries, month) {
 }
 
 /**
-Get total number of made/missed calls per day for a given day in a given month 
+Get total number of made/missed calls per day for a given day in a given month
 over all years of data. Return array of objects in the following format:
 
 [
