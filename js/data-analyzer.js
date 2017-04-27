@@ -155,13 +155,67 @@ function convertMonth(monthNum) {
 }
 
 /**
+Get total number of made/missed calls per year. Return an array of objects in the
+following format:
+
+[
+    {
+        "numCallsTotal": 5555,
+        "numMissedCalls", 200,
+        "numMadeCalls", 5355
+    },
+
+    {
+        "numCallsTotal": 5112,
+        "numMissedCalls", 112,
+        "numMadeCalls", 5000
+    },
+
+    ...
+]
+
+This array will have one entry per year of data.
+**/
+function getCallDataPerYear(jsonWorkbookEntries, years) {
+    // the array of call data per year
+    var callDataPerYear = [];
+
+    // make one entry of call data per year
+    for (var i = 0; i < years.length; i++) {
+        var obj = new Object();
+        obj.numCallsTotal = 0;
+        obj.numMissedCalls = 0;
+        obj.numMadeCalls = 0;
+        callDataPerYear.push(obj);
+    }
+
+    // aggregate the call data for each year
+    for (var i = 0; i < years.length; i++) {
+        for (var j = 0; j < jsonWorkbookEntries.length; j++) {
+            var entry = jsonWorkbookEntries[j];
+            var entryYear = entry.Date.getFullYear();
+            // only add data corresponding to the proper year
+            if (entryYear === years[i]) {
+                callDataPerYear[i].numCallsTotal++;        // increment the total number of calls by one
+                if (entry.Missed) {
+                    callDataPerYear[i].numMissedCalls++;   // if the call was missed, increment total number of missed calls
+                } else {
+                    callDataPerYear[i].numMadeCalls++;     // else increment total number of made calls
+                }
+            }
+        }
+    }
+
+    return callDataPerYear;
+}
+
+/**
 Get total number of made/missed calls per month. Return an array of objects in the
 following format:
 
 [
     {
         "month": "January",
-        "yearIndex": 0,
         "numCallsTotal": 555,
         "numMissedCalls", 100,
         "numMadeCalls", 455
@@ -169,7 +223,6 @@ following format:
 
     {
         "month": "February",
-        "yearIndex": 1,
         "numCallsTotal": 0,
         "numMissedCalls", 0,
         "numMadeCalls", 0
@@ -178,27 +231,25 @@ following format:
     ...
 ]
 
-This array will be of size 12 * (number of years), with one entry per unique month.
-For example, if there is two years worth of data, then this will return an array of
-size 24.
+This array will be of size 12, with one entry per month.
 Note: It might make sense to edit this function to specify which
 months should be analyzed based on the user's input.
 **/
 function getCallDataPerMonth(jsonWorkbookEntries, years) {
-  // array of objects
-  var callDataPerMonth = [];
+    // array of objects
+    var callDataPerMonth = [];
 
-  // create array of months for each year of data
-  for (var j = 0; j < years.length; j++) {
-    // initialize each month's aggregate data
-    for (var i = 0; i < 12; i++) {
-      var obj = new Object();
-      obj.month = convertMonth(i);
-      obj.yearIndex = j;
-      obj.numCallsTotal = 0;
-      obj.numMissedCalls = 0;
-      obj.numMadeCalls = 0;
-      callDataPerMonth.push(obj);
+    // create array of months for each year of data
+    for (var j = 0; j < years.length; j++) {
+        // initialize each month's aggregate data
+        for (var i = 0; i < 12; i++) {
+            var obj = new Object();
+            obj.month = convertMonth(i);
+            obj.numCallsTotal = 0;
+            obj.numMissedCalls = 0;
+            obj.numMadeCalls = 0;
+            callDataPerMonth.push(obj);
+        }
     }
   }
 
