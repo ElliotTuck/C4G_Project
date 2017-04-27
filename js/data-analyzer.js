@@ -298,7 +298,6 @@ function getActiveYears(jsonWorkbookEntries) {
       uniqueDict[year] = 0;
     }
   }
-  console.debug(uniqueYears);
   return uniqueYears;
 }
 

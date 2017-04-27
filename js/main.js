@@ -4,7 +4,6 @@ var defaultDropColor = "#bc0033"    // default color of drop-area
 var highlightedDropColor = "gray"   // color of drop-area when a file is being dragged over it
 var jsonWorkbookEntries;
 var checkedMonths;
-
 $(document).ready(function() {
 	var expanded = false;
 
@@ -12,14 +11,6 @@ $(document).ready(function() {
 	$("#submit-btn").click(function() {
 		if (jsonWorkbookEntries && !expanded) {
 			// convert workbook to JSON
-			for (var i = 0; i < checkedMonths.length; i++) {
-				var monthName = convertMonth(i);
-				var isChecked = $("#" + monthName).is(":checked");
-				checkedMonths[i] = isChecked;
-			}
-			// At this point, checkedMonths contains valid info about which checkbox is checked
-			var missedCallRule = $("#missed-call-rule").val();
-			activeYears = getActiveYears(jsonWorkbookEntries);
 			labelMissed(jsonWorkbookEntries, 40, false); // 40 seconds
 			var missedCounter = 0;
 			var i = 0;
@@ -28,7 +19,7 @@ $(document).ready(function() {
 					missedCounter++;
 				}
 			}
-
+			processUserOptions();
 			// display total number of missed calls
 			d3.select("#initial-info")
 			  .append("h1")
@@ -176,6 +167,41 @@ function to_json(workbook) {
     });
     return result;
 }
+
+function processUserOptions() {
+	var userOptions = {};
+	var errorMessage;
+	// Process month checkboxes
+	for (var i = 0; i < checkedMonths.length; i++) {
+		var monthName = convertMonth(i);
+		var isChecked = $("#" + monthName).is(":checked");
+		checkedMonths[i] = isChecked;
+	}
+	userOptions["checkedMonths"] = checkedMonths;
+	// At this point, checkedMonths contains valid info about which checkbox is checked
+	var missedCallRule = $("#missed-call-rule").val();
+	// checking missedCallRule is valid
+	if (missedCallRule != "" && missedCallRule <= 0) { // "" is when the form is not filled out
+		errorMessage = "Missed call rule is less than 0";
+		return errorMessage;
+	} else {
+		var defaultMissedCallRule = 40;
+		userOptions["missedCallRule"] = (missedCallRule == "") ? defaultMissedCallRule : missedCallRule;
+	}
+	var startDate = new Date($("#start-calendar").val());
+	var startDateStamp = Date.parse(startDate);
+	var endDate = new Date($("#end-calendar").val());
+	var endDateStamp = Date.parse(endDate)
+	if (isNaN(startDate)  ^ isNaN(endDate)) {
+		errorMessage = "The start or end date is not valid";
+		return errorMessage;
+	}
+	var startMin = $("#start-calendar").attr("min");
+	var startMax = $("#start-calendar").attr("max");
+	var endMin = $("#end-calendar").attr("min");
+	var endMax = $("#end-calendar").attr("max");
+}
+
 
 function dateToDashString(date) {
 	var day = date.getDate();
