@@ -7,7 +7,7 @@ callDataPerYear: array of call data objects, indexed by year, including one entr
 jsonWorkbookEntries: JSON object of all the Excel entries
 years: array of the years of data
 */
-function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries, years) {
+function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries) {
 
 	/*********************/
 	/* Useful variables. */
@@ -50,8 +50,10 @@ function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries, years) {
 	    .append("g")
 	    .on("click", function(d, i) {
 	    	if (!expanded) {
-		    	// get the call data for the selected month
-		    	var callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, i, years);
+		    	// get the call data for the selected year
+		    	var callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, years[i]);
+
+		    	console.log(callDataPerMonth);
 
 		    	// show a month-level view of the call data for the selected year
 		    	visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, years);

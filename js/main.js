@@ -4,6 +4,7 @@ var defaultDropColor = "#bc0033"    // default color of drop-area
 var highlightedDropColor = "gray"   // color of drop-area when a file is being dragged over it
 var jsonWorkbookEntries;
 var checkedMonths;
+var years = [2016, 2017];
 $(document).ready(function() {
 	var expanded = false;
 
@@ -45,21 +46,20 @@ $(document).ready(function() {
 			    .text("Date of first entry: " + e1String);
 
 			// get the call data per year
-			var years = [2016, 2017];
 			var callDataPerYear = getCallDataPerYear(jsonWorkbookEntries, years);
 			console.log(callDataPerYear);
 
 			// visualize the data at the year level
-			visualizeYearLevel(callDataPerYear, jsonWorkbookEntries, years);
+			visualizeYearLevel(callDataPerYear, jsonWorkbookEntries);
 
 			// get the call data per month
 			// Note: the [2016, 2017] array is a dummy array to test functionality
-			var years = [2017];
-			var callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, years);
-			console.log(callDataPerMonth);
+			//var years = [2017];
+			//var callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, years);
+			//console.log(callDataPerMonth);
 
 			// visualize the data at the month level
-			visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, years);
+			//visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, years);
 
 			// get the call data per day
 			var month = 1;   // explicitly check the month of February
