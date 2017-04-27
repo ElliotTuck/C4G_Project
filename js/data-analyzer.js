@@ -261,8 +261,40 @@ function getCallDataPerMonth(jsonWorkbookEntries, year) {
             }
         }
     }
+  return callDataPerMonth;
+}
 
-    return callDataPerMonth;
+function getActiveMonths(jsonWorkbookEntries) {
+  var monthArray = [];
+  var entry;
+  for (var i = 0; i < 12; i++) { // Initialize all months to inactive
+    monthArray[i] = false;
+  }
+  for (var i = 0; i < jsonWorkbookEntries.length; i++) {
+    entry = jsonWorkbookEntries[i];
+    monthArray[entry.Date.getMonth()] = true
+  }
+  return monthArray;
+}
+
+function getActiveYears(jsonWorkbookEntries) {
+  var uniqueDict = {};
+  var uniqueYears = [];
+  for (var i = 0; i < jsonWorkbookEntries.length; i++) {
+    var year = jsonWorkbookEntries[i].Date.getFullYear();
+    if (typeof(uniqueDict[year]) == "undefined") {
+      uniqueYears.push(year);
+      uniqueDict[year] = 0;
+    }
+  }
+  return uniqueYears;
+}
+
+function sortByDate(jsonWorkbookEntries) {
+  jsonWorkbookEntries.sort(function(a, b) {
+    return a.Date - b.Date;
+  });
+  return jsonWorkbookEntries;
 }
 
 /**
