@@ -305,8 +305,6 @@ function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, month, year) {
 		    	// get the call data for the selected day
 		    	var callDataPerHour = getCallDataPerHour(jsonWorkbookEntries, i, month, year);
 
-		    	console.log(callDataPerHour);
-
 		    	// show an hour-level view of the call data for the selected month
 		    	visualizeHourLevel(callDataPerHour, jsonWorkbookEntries);
 

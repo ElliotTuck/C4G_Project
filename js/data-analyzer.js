@@ -161,14 +161,16 @@ following format:
 [
     {
         "numCallsTotal": 5555,
-        "numMissedCalls", 200,
-        "numMadeCalls", 5355
+        "numMissedCalls": 200,
+        "numMadeCalls": 5355,
+        "expanded": true
     },
 
     {
         "numCallsTotal": 5112,
-        "numMissedCalls", 112,
-        "numMadeCalls", 5000
+        "numMissedCalls": 112,
+        "numMadeCalls": 5000,
+        "expanded": false
     },
 
     ...
@@ -186,6 +188,7 @@ function getCallDataPerYear(jsonWorkbookEntries, years) {
         obj.numCallsTotal = 0;
         obj.numMissedCalls = 0;
         obj.numMadeCalls = 0;
+        obj.expanded = false;
         callDataPerYear.push(obj);
     }
 
@@ -216,14 +219,16 @@ indexed by month, in the following format:
 [
     {
         "numCallsTotal": 555,
-        "numMissedCalls", 100,
-        "numMadeCalls", 455
+        "numMissedCalls": 100,
+        "numMadeCalls": 455,
+        "expanded": false
     },
 
     {
         "numCallsTotal": 0,
-        "numMissedCalls", 0,
-        "numMadeCalls", 0
+        "numMissedCalls": 0,
+        "numMadeCalls": 0
+        "expanded": true
     },
 
     ...
@@ -243,6 +248,7 @@ function getCallDataPerMonth(jsonWorkbookEntries, year) {
         obj.numCallsTotal = 0;
         obj.numMissedCalls = 0;
         obj.numMadeCalls = 0;
+        obj.expanded = false;
         callDataPerMonth.push(obj);
     }
 
@@ -261,20 +267,24 @@ function getCallDataPerMonth(jsonWorkbookEntries, year) {
             }
         }
     }
-  return callDataPerMonth;
+
+    return callDataPerMonth;
 }
 
 function getActiveMonths(jsonWorkbookEntries) {
-  var monthArray = [];
-  var entry;
-  for (var i = 0; i < 12; i++) { // Initialize all months to inactive
-    monthArray[i] = false;
-  }
-  for (var i = 0; i < jsonWorkbookEntries.length; i++) {
-    entry = jsonWorkbookEntries[i];
-    monthArray[entry.Date.getMonth()] = true
-  }
-  return monthArray;
+    var monthArray = [];
+    var entry;
+
+    for (var i = 0; i < 12; i++) { // Initialize all months to inactive
+        monthArray[i] = false;
+    }
+
+    for (var i = 0; i < jsonWorkbookEntries.length; i++) {
+        entry = jsonWorkbookEntries[i];
+        monthArray[entry.Date.getMonth()] = true
+    }
+
+    return monthArray;
 }
 
 function getActiveYears(jsonWorkbookEntries) {
@@ -435,7 +445,7 @@ function getActiveYears(jsonWorkbookEntries) {
       uniqueDict[year] = 0;
     }
   }
-  console.debug(uniqueYears);
+  //console.debug(uniqueYears);
   return uniqueYears;
 }
 
