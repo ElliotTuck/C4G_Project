@@ -49,6 +49,9 @@ $(document).ready(function() {
 			var callDataPerYear = getCallDataPerYear(jsonWorkbookEntries, years);
 			console.log(callDataPerYear);
 
+			// visualize the data at the year level
+			visualizeYearLevel(callDataPerYear, jsonWorkbookEntries, years);
+
 			// get the call data per month
 			// Note: the [2016, 2017] array is a dummy array to test functionality
 			var years = [2017];

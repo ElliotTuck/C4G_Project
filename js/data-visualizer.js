@@ -1,6 +1,126 @@
 /**
-Create and display a bar chart showing the number of made/missed calls per month (high-level).
-The chart will be displayed below any other elements on the page.
+Create and display a bar chart showing the number of made/missed calls per year.
+
+Inputs:
+callDataPerYear: array of call data objects, indexed by year, including one entry per
+	each year of the aggregate call data
+jsonWorkbookEntries: JSON object of all the Excel entries
+years: array of the years of data
+*/
+function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries, years) {
+
+	/*********************/
+	/* Useful variables. */
+	/*********************/
+
+	// The width of the SVG element.
+	var width = window.innerWidth - 100;
+	// The height of the SVG element.
+	var	height = window.innerHeight / 2;
+	// Display padding for the horizontal axis.
+	var	axisPadding = 25;
+	// Display padding for call bar labels.
+	var labelPadding = 13;
+	// The maximum number of calls for any year in callDataPerYear.
+	var	maxCalls = d3.max(callDataPerYear, function(d) { return d.numCallsTotal; });
+	// A quantitative scale that maps call quantity to on-screen bar height.
+	var	heightScale = d3.scale.linear()
+		.domain([0, maxCalls])
+		.range([0, height - axisPadding]);
+	// An ordinal scale that maps entries in callDataPerYear to horizontal on-screen locations.
+	var	xScale = d3.scale.ordinal()
+		.domain(d3.range(callDataPerYear.length))
+		.rangeRoundBands([0, width], 0.05);
+	// The SVG element for year-level visualizations.
+	var	svg = d3.select("#svg-year-level")
+		.attr("width", width)
+		.attr("height", height);
+	// A boolean describing whether or not a lower-level chart has been displayed.
+	var	expanded = false;
+
+	/***********************/
+	/* Visualize the data. */
+	/***********************/
+
+	// bind the data to new DOM elements (initially an empty selection of DOM elements, 
+	// as no prior visualization has been made)
+	var gEnter = svg.selectAll("g")
+	    .data(callDataPerYear)
+	    .enter()
+	    .append("g")
+	    .on("click", function(d, i) {
+	    	if (!expanded) {
+		    	// get the call data for the selected month
+		    	var callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, i, years);
+
+		    	// show a month-level view of the call data for the selected year
+		    	visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, years);
+
+		    	// scroll to the bottom of the page (for a nice visual effect)
+				$("body").delay(100)
+					.animate({ scrollTop: $(document).height() - $(window).height() }, 750);
+
+				// month-level visualization has been created
+				expanded = true;
+			}
+	    });
+
+	/* create bars */
+
+	// create bars for made calls
+	gEnter.append("rect")
+	    .attr("class", "made-call-bar")
+	    .attr("x", function(d, i) { return xScale(i); })
+	    .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls); })
+	    .attr("width", xScale.rangeBand())
+	    .attr("height", function(d) { return heightScale(d.numMadeCalls); })
+
+	// create bars for missed calls
+	gEnter.append("rect")
+        .attr("class", "missed-call-bar")
+        .attr("x", function(d, i) { return xScale(i); })
+        .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls) - heightScale(d.numMissedCalls); })
+        .attr("width", xScale.rangeBand())
+        .attr("height", function(d) { return heightScale(d.numMissedCalls); })
+
+	/* create bar labels */
+
+	// create bar labels for made calls
+	gEnter.append("text")
+	    .text(function(d) { return d.numMadeCalls; })
+        .attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; })
+        .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls) + labelPadding; })
+        .attr("text-anchor", "middle")
+        .style("font-family", "sans-serif")
+        .style("fill", "white")
+        .style("font-size", "12px");
+
+    // create bar labels for missed calls
+	gEnter.append("text")
+	    .text(function(d) { return d.numMissedCalls; })
+        .attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; })
+        .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numCallsTotal) + labelPadding; })
+        .attr("text-anchor", "middle")
+        .style("font-family", "sans-serif")
+        .style("fill", "white")
+        .style("font-size", "12px");
+
+    /* create the horizontal axis */
+    var d = [];
+	for (var i = 0; i < years.length; i++) {
+		d.push(years[i]);
+	}
+	var xAxis = d3.svg.axis()
+		.scale(xScale.domain(d))
+		.orient("bottom");
+	svg.append("g")
+		.attr("transform", "translate(0," + (height - axisPadding) + ")")
+		.call(xAxis);
+
+}
+
+/**
+Create and display a bar chart showing the number of made/missed calls per month.
 
 Inputs:
 callDataPerMonth: array of call data objects, indexed by month, including an entry for
@@ -14,7 +134,7 @@ function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, years) {
 	/* Useful variables. */
 	/*********************/
 
-	// The width of SVG element.
+	// The width of the SVG element.
 	var width = window.innerWidth - 100;
 	// The height of the SVG element.
 	var	height = window.innerHeight / 2;
@@ -135,9 +255,8 @@ function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, years) {
 
 /**
 Create and display a bar chart showing the number of made/missed calls per day in a selected
-month (mid-level). The chart will be displayed below any other elements on the page. If there
-is more than one year of data, then the monthly charts for each year will be displayed side
-by side.
+month. If there is more than one year of data, then the monthly charts for each year will be 
+displayed side by side.
 
 Inputs:
 callDataPerDay: array of call data objects, indexed by day, including an entry for all
@@ -343,9 +462,8 @@ function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, years) {
 
 /**
 Create and display a bar chart showing the number of made/missed calls per hour in a selected
-day (low-level). The chart will be displayed below any other elements on the page. If there
-is more than one year of data, then the daily charts for each year will be displayed side
-by side.
+day. If there is more than one year of data, then the daily charts for each year will be 
+displayed side by side.
 
 Inputs:
 callDataPerHour: array of call data objects, indexed by day, including an entry for all
