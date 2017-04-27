@@ -107,6 +107,7 @@ var dropListener = {
 	    var name = file.name;
 	    reader.onload = function(event) {
 			$("#list")[0].innerHTML = "<strong>Loading file...</strong>";
+			
 			workbook = XLSX.read(event.target.result, {type: 'binary'});
 			var json_workbook = to_json(workbook);
 			var sheetName = workbook.SheetNames[0];
@@ -124,8 +125,8 @@ var dropListener = {
 			var minDate = dateToDashString(jsonWorkbookEntries[0].Date);
 			var maxDate = dateToDashString(jsonWorkbookEntries[jsonWorkbookEntries.length - 1].Date);
 
-			console.debug(minDate);
-			console.debug(maxDate);
+			//console.debug(minDate);
+			//console.debug(maxDate);
 			$("#start-calendar").attr("min", minDate);
 			$("#start-calendar").attr("max", maxDate);
 			$("#end-calendar").attr("min", minDate);

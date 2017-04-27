@@ -136,7 +136,7 @@ following format:
 [
     {
         "month": "January",
-        "year": 2016,
+        "yearIndex": 0,
         "numCallsTotal": 555,
         "numMissedCalls", 100,
         "numMadeCalls", 455
@@ -144,7 +144,7 @@ following format:
 
     {
         "month": "February",
-        "year": 2017,
+        "yearIndex": 1,
         "numCallsTotal": 0,
         "numMissedCalls", 0,
         "numMadeCalls", 0
@@ -169,7 +169,7 @@ function getCallDataPerMonth(jsonWorkbookEntries, years) {
         for (var i = 0; i < 12; i++) {
             var obj = new Object();
             obj.month = convertMonth(i);
-            obj.year = years[j];
+            obj.yearIndex = j;
             obj.numCallsTotal = 0;
             obj.numMissedCalls = 0;
             obj.numMadeCalls = 0;
@@ -227,7 +227,7 @@ of objects in the following format:
     {
         "day": 1,
         "month": 1,
-        "year": 2017,
+        "yearIndex": 1,
         "numCallsTotal": 100,
         "numMissedCalls": 10,
         "numMadeCalls": 90,
@@ -237,7 +237,7 @@ of objects in the following format:
     {
         "day": 2,
         "month": 1,
-        "year"; 2017,
+        "yearIndex"; 1,
         "numCallsTotal": 0,
         "numMissedCalls": 0,
         "numMadeCalls": 0,
@@ -260,7 +260,7 @@ function getCallDataPerDay(jsonWorkbookEntries, month, years) {
             var obj = new Object();
             obj.day = i + 1;
             obj.month = month;
-            obj.year = years[j];
+            obj.yearIndex = j;
             obj.numCallsTotal = 0;
             obj.numMissedCalls = 0;
             obj.numMadeCalls = 0;
@@ -299,6 +299,7 @@ over all years of data. Return array of objects in the following format:
 [
     {
         "hour": 0,
+        "yearIndex": 0,
         "numCallsTotal": 7,
         "numMissedCalls": 1,
         "numMadeCalls": 6
@@ -306,6 +307,7 @@ over all years of data. Return array of objects in the following format:
 
     {
         "hour": 1,
+        "yearIndex": 1,
         "numCallsTotal": 0,
         "numMissedCalls": 0,
         "numMadeCalls": 0
@@ -326,6 +328,7 @@ function getCallDataPerHour(jsonWorkbookEntries, month, date, years) {
         for (var j = 0; j < 24; j++) {
             var obj = new Object();
             obj.hour = j;
+            obj.yearIndex = i;
             obj.numCallsTotal = 0;
             obj.numMissedCalls = 0;
             obj.numMadeCalls = 0;
