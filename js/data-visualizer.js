@@ -176,11 +176,17 @@ function visualizeMidLevel(callDataPerDay, jsonWorkbookEntries, years) {
 
 				// low-level visualization has been created for this month
 				d.expanded = true;
+				d3.select(this)
+					.select(".made-call-bar")
+					  .classed("selected-made-call-bar", true);
+				d3.select(this)
+					.select(".missed-call-bar")
+					  .classed("selected-missed-call-bar", true);
 			} else {   // a lower-level visualization already exists
 				// whether or not the low-level visualization is for this month
 	    		var expanded = d.expanded;
 
-				if (expanded) {
+				if (expanded) {   // the present low-level visualization is for this month
 					// delete the visualization (and any others below it)
 					d3.select("#svg-low-level")
 					  .selectAll("g")
@@ -193,7 +199,13 @@ function visualizeMidLevel(callDataPerDay, jsonWorkbookEntries, years) {
 
 					// lower-level visualization for this month has been removed
 					d.expanded = false;
-				} else {
+					d3.select(this)
+						.select(".made-call-bar")
+						  .classed("selected-made-call-bar", false);
+					d3.select(this)
+						.select(".missed-call-bar")
+						  .classed("selected-missed-call-bar", false);
+				} else {   // the present low-level visualization is not for this month
 					// clear expanded of all entries
 					clearExpanded(callDataPerDay);
 
@@ -211,6 +223,18 @@ function visualizeMidLevel(callDataPerDay, jsonWorkbookEntries, years) {
 
 			    	// a visualization has been made for this month
 			    	d.expanded = true;
+			    	d3.select("#svg-mid-level")
+			    		.select(".selected-made-call-bar")
+			    		  .classed("selected-made-call-bar", false);
+			    	d3.select("#svg-mid-level")
+			    		.select(".selected-missed-call-bar")
+			    		  .classed("selected-missed-call-bar", false);
+			    	d3.select(this)
+						.select(".made-call-bar")
+						  .classed("selected-made-call-bar", true);
+					d3.select(this)
+						.select(".missed-call-bar")
+						  .classed("selected-missed-call-bar", true);
 		    	}
 			}
 	    });

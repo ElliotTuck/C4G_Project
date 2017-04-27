@@ -87,3 +87,11 @@ hr {
 .missed-call-bar {
 	fill: red;
 }
+
+.selected-made-call-bar {
+	fill: lightgreen;
+}
+
+.selected-missed-call-bar {
+	fill: lightcoral;
+}
