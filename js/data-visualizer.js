@@ -5,7 +5,6 @@ Inputs:
 callDataPerYear: array of call data objects, indexed by year, including one entry per
 	each year of the aggregate call data
 jsonWorkbookEntries: JSON object of all the Excel entries
-years: array of the years of data
 */
 function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries) {
 
@@ -56,7 +55,7 @@ function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries) {
 		    	console.log(callDataPerMonth);
 
 		    	// show a month-level view of the call data for the selected year
-		    	visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, years);
+		    	visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, years[i]);
 
 		    	// scroll to the bottom of the page (for a nice visual effect)
 				$("body").delay(100)
@@ -128,9 +127,8 @@ Inputs:
 callDataPerMonth: array of call data objects, indexed by month, including an entry for
 	all months of the year for each element of years
 jsonWorkbookEntries: JSON object of all the Excel entries
-years: array of years that the data spans
 */
-function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, years) {
+function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, year) {
 
 	/*********************/
 	/* Useful variables. */
@@ -173,13 +171,12 @@ function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, years) {
 	    .append("g")
 	    .on("click", function(d, i) {
 	    	if (!expanded) {
-	    		// convert i to a month index [0, 11]
-	    		var month = i %= 12;
-
 		    	// get the call data for the selected month
-		    	var callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, month, years);
+		    	var callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, i, year);
 
-		    	// show a day-level view of the call data for the selected month
+		    	console.log(callDataPerDay);
+
+		    	// show a day-level view of the call data for the selected month of the selected year
 		    	visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, years);
 
 		    	// scroll to the bottom of the page (for a nice visual effect)

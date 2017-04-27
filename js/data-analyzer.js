@@ -265,49 +265,12 @@ function getCallDataPerMonth(jsonWorkbookEntries, year) {
     return callDataPerMonth;
 }
 
-function getActiveMonths(jsonWorkbookEntries) {
-  var monthArray = [];
-  var entry;
-  for (var i = 0; i < 12; i++) { // Initialize all months to inactive
-    monthArray[i] = false;
-  }
-  for (var i = 0; i < jsonWorkbookEntries.length; i++) {
-    entry = jsonWorkbookEntries[i];
-    monthArray[entry.Date.getMonth()] = true
-  }
-  return monthArray;
-}
-
-function getActiveYears(jsonWorkbookEntries) {
-  var uniqueDict = {};
-  var uniqueYears = [];
-  for (var i = 0; i < jsonWorkbookEntries.length; i++) {
-    var year = jsonWorkbookEntries[i].Date.getFullYear();
-    if (typeof(uniqueDict[year]) == "undefined") {
-      uniqueYears.push(year);
-      uniqueDict[year] = 0;
-    }
-  }
-  console.debug(uniqueYears);
-  return uniqueYears;
-}
-
-function sortByDate(jsonWorkbookEntries) {
-  jsonWorkbookEntries.sort(function(a, b) {
-    return a.Date - b.Date;
-  });
-  return jsonWorkbookEntries;
-}
-
 /**
-Get total number of made/missed calls per day for a given month. Return array
-of objects in the following format:
+Get total number of made/missed calls per day for a given month of a given year. Return array
+of objects, indexed by day [0, 30], in the following format:
 
 [
     {
-        "day": 1,
-        "month": 1,
-        "yearIndex": 1,
         "numCallsTotal": 100,
         "numMissedCalls": 10,
         "numMadeCalls": 90,
@@ -315,9 +278,6 @@ of objects in the following format:
     },
 
     {
-        "day": 2,
-        "month": 1,
-        "yearIndex"; 1,
         "numCallsTotal": 0,
         "numMissedCalls": 0,
         "numMadeCalls": 0,
@@ -327,49 +287,41 @@ of objects in the following format:
     ...
 ]
 
-This array will be of variable size depending on the years of data. For example,
-if years = [2016, 2017], then this array will be of size 62 (= 2 years * 31 days per month).
+This array will be of size 31, with one entry per day of the month (assumes 31 days each month).
 **/
-function getCallDataPerDay(jsonWorkbookEntries, month, years) {
-  // array of objects
-  var callDataPerDay = [];
+function getCallDataPerDay(jsonWorkbookEntries, month, year) {
+    // array of objects
+    var callDataPerDay = [];
 
-  // create initial objects (assumes 31 days for each month)
-  for (var j = 0; j < years.length; j++) {
+    // create initial objects (assumes 31 days for each month)
     for (var i = 0; i < 31; i++) {
-      var obj = new Object();
-      obj.day = i + 1;
-      obj.month = month;
-      obj.yearIndex = j;
-      obj.numCallsTotal = 0;
-      obj.numMissedCalls = 0;
-      obj.numMadeCalls = 0;
-      obj.expanded = false;
-      callDataPerDay.push(obj);
+        var obj = new Object();
+        obj.numCallsTotal = 0;
+        obj.numMissedCalls = 0;
+        obj.numMadeCalls = 0;
+        obj.expanded = false;
+        callDataPerDay.push(obj);
     }
-  }
 
-  // aggregate call data
-  for (var j = 0; j < years.length; j++) {
+    // aggregate call data
     for (var i = 0; i < jsonWorkbookEntries.length; i++) {
-      var entry = jsonWorkbookEntries[i];
-      var entryMonth = entry.Date.getMonth();
-      var entryYear = entry.Date.getFullYear();
-      if (entryMonth === month && entryYear === years[j]) {
-        var entryDate = entry.Date.getDate();
-        var index = 31 * j + entryDate - 1;
-        var callObj = callDataPerDay[index];
-        callObj.numCallsTotal++; // increment total number of calls on this day by one
-        if (entry.Missed) {
-          callObj.numMissedCalls++; // if call was missed, increment total number of missed calls
-        } else {
-          callObj.numMadeCalls++; // else increment total number of made calls
+        var entry = jsonWorkbookEntries[i];
+        var entryMonth = entry.Date.getMonth();
+        var entryYear = entry.Date.getFullYear();
+        // only add data for the given month of the given year
+        if (entryMonth === month && entryYear === year) {
+            var entryDate = entry.Date.getDate();
+            var callObj = callDataPerDay[entryDate - 1];
+            callObj.numCallsTotal++;        // increment total number of calls on this day by one
+            if (entry.Missed) {
+                callObj.numMissedCalls++;   // if call was missed, increment total number of missed calls
+            } else {
+                callObj.numMadeCalls++;     // else increment total number of made calls
+            }
         }
-      }
     }
-  }
 
-  return callDataPerDay;
+    return callDataPerDay;
 }
 
 /**
@@ -438,4 +390,38 @@ function getCallDataPerHour(jsonWorkbookEntries, month, date, years) {
   }
 
   return callDataPerHour;
+}
+
+function getActiveMonths(jsonWorkbookEntries) {
+  var monthArray = [];
+  var entry;
+  for (var i = 0; i < 12; i++) { // Initialize all months to inactive
+    monthArray[i] = false;
+  }
+  for (var i = 0; i < jsonWorkbookEntries.length; i++) {
+    entry = jsonWorkbookEntries[i];
+    monthArray[entry.Date.getMonth()] = true
+  }
+  return monthArray;
+}
+
+function getActiveYears(jsonWorkbookEntries) {
+  var uniqueDict = {};
+  var uniqueYears = [];
+  for (var i = 0; i < jsonWorkbookEntries.length; i++) {
+    var year = jsonWorkbookEntries[i].Date.getFullYear();
+    if (typeof(uniqueDict[year]) == "undefined") {
+      uniqueYears.push(year);
+      uniqueDict[year] = 0;
+    }
+  }
+  console.debug(uniqueYears);
+  return uniqueYears;
+}
+
+function sortByDate(jsonWorkbookEntries) {
+  jsonWorkbookEntries.sort(function(a, b) {
+    return a.Date - b.Date;
+  });
+  return jsonWorkbookEntries;
 }
