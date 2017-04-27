@@ -12,7 +12,8 @@ $(document).ready(function() {
 		if (jsonWorkbookEntries && !expanded) {
 			// convert workbook to JSON
 
-
+			var missedCallRule = $("#missed-call-rule").val();
+			console.debug(missedCallRule)
 			labelMissed(jsonWorkbookEntries, 40, false); // 40 seconds
 			var missedCounter = 0;
 			var i = 0;
@@ -107,7 +108,7 @@ var dropListener = {
 	    var name = file.name;
 	    reader.onload = function(event) {
 			$("#list")[0].innerHTML = "<strong>Loading file...</strong>";
-			
+
 			workbook = XLSX.read(event.target.result, {type: 'binary'});
 			var json_workbook = to_json(workbook);
 			var sheetName = workbook.SheetNames[0];
