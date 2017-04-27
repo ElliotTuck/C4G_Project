@@ -279,9 +279,17 @@ function getActiveMonths(jsonWorkbookEntries) {
 }
 
 function getActiveYears(jsonWorkbookEntries) {
-  return jsonWorkbookEntries.filter(function(item, i, arr) {
-    return arr.indexOf(item.Date.getYear()) === i;
-  });
+  var uniqueDict = {};
+  var uniqueYears = [];
+  for (var i = 0; i < jsonWorkbookEntries.length; i++) {
+    var year = jsonWorkbookEntries[i].Date.getFullYear();
+    if (typeof(uniqueDict[year]) == "undefined") {
+      uniqueYears.push(year);
+      uniqueDict[year] = 0;
+    }
+  }
+  console.debug(uniqueYears);
+  return uniqueYears;
 }
 
 function sortByDate(jsonWorkbookEntries) {
