@@ -33,7 +33,7 @@ function visualizeHighLevel(callDataPerMonth, jsonWorkbookEntries, years) {
 		.domain(d3.range(callDataPerMonth.length))
 		.rangeRoundBands([0, width], 0.05);
 	// The SVG element for high-level visualizations.
-	var	svg = d3.select("#svg-high-level")
+	var	svg = d3.select("#svg-month-level")
 		.attr("width", width)
 		.attr("height", height);
 	// A boolean describing whether or not a lower-level chart has been displayed.
@@ -170,7 +170,7 @@ function visualizeMidLevel(callDataPerDay, jsonWorkbookEntries, years) {
 		.domain(d3.range(callDataPerDay.length))
 		.rangeRoundBands([0, width], 0.05);
 	// The SVG element for mid-level visualizations.
-	var	svg = d3.select("#svg-mid-level")
+	var	svg = d3.select("#svg-day-level")
 		.attr("width", width)
 		.attr("height", height);
 
@@ -219,10 +219,10 @@ function visualizeMidLevel(callDataPerDay, jsonWorkbookEntries, years) {
 
 				if (expanded) {   // the present low-level visualization is for this month
 					// delete the visualization (and any others below it)
-					d3.select("#svg-low-level")
+					d3.select("#svg-hour-level")
 					  .selectAll("g")
 						.remove();
-					d3.select("#svg-low-level")
+					d3.select("#svg-hour-level")
 						.transition()
 						.duration(1000)
 						.attr("width", 0)
@@ -254,10 +254,10 @@ function visualizeMidLevel(callDataPerDay, jsonWorkbookEntries, years) {
 
 			    	// a visualization has been made for this month
 			    	d.expanded = true;
-			    	d3.select("#svg-mid-level")
+			    	d3.select("#svg-day-level")
 			    		.select(".selected-made-call-bar")
 			    		  .classed("selected-made-call-bar", false);
-			    	d3.select("#svg-mid-level")
+			    	d3.select("#svg-day-level")
 			    		.select(".selected-missed-call-bar")
 			    		  .classed("selected-missed-call-bar", false);
 			    	d3.select(this)
@@ -377,7 +377,7 @@ function visualizeLowLevel(callDataPerHour, jsonWorkbookEntries) {
 		.domain(d3.range(callDataPerHour.length))
 		.rangeRoundBands([0, width], 0.05);
 	// The SVG element for low-level visualizations.
-	var	svg = d3.select("#svg-low-level")
+	var	svg = d3.select("#svg-hour-level")
 		.attr("width", width)
 		.attr("height", height);
 
@@ -480,7 +480,7 @@ function revisualizeLowLevel(callDataPerHour, jsonWorkbookEntries) {
 						 .domain(d3.range(callDataPerHour.length))
 						 .rangeRoundBands([0, width], 0.05),
 		svg = d3.select("body")
-				.select("#svg-low-level");
+				.select("#svg-hour-level");
 
 	// bind the new data to the old DOM elements
 	var gUpdate = svg.selectAll("g")
