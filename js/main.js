@@ -18,6 +18,7 @@ $(document).ready(function() {
 			}
 			// At this point, checkedMonths contains valid info about which checkbox is checked
 			var missedCallRule = $("#missed-call-rule").val();
+			console.debug(getActiveYears(jsonWorkbookEntries));
 			console.debug(missedCallRule)
 			labelMissed(jsonWorkbookEntries, 40, false); // 40 seconds
 			var missedCounter = 0;
