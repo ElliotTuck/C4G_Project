@@ -43,6 +43,11 @@ $(document).ready(function() {
 			  .append("h1")
 			    .text("Date of first entry: " + e1String);
 
+			// get the call data per year
+			var years = [2016, 2017];
+			var callDataPerYear = getCallDataPerYear(jsonWorkbookEntries, years);
+			console.log(callDataPerYear);
+
 			// get the call data per month
 			// Note: the [2016, 2017] array is a dummy array to test functionality
 			var years = [2017];
