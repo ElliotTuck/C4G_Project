@@ -52,8 +52,6 @@ function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries) {
 		    	// get the call data for the selected year
 		    	var callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, years[i]);
 
-		    	console.log(callDataPerMonth);
-
 		    	// show a month-level view of the call data for the selected year
 		    	visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, years[i]);
 
@@ -174,10 +172,8 @@ function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, year) {
 		    	// get the call data for the selected month
 		    	var callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, i, year);
 
-		    	console.log(callDataPerDay);
-
 		    	// show a day-level view of the call data for the selected month of the selected year
-		    	visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, years);
+		    	visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, i, year);
 
 		    	// scroll to the bottom of the page (for a nice visual effect)
 				$("body").delay(100)
@@ -254,16 +250,15 @@ function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, year) {
 
 /**
 Create and display a bar chart showing the number of made/missed calls per day in a selected
-month. If there is more than one year of data, then the monthly charts for each year will be 
-displayed side by side.
+month.
 
 Inputs:
 callDataPerDay: array of call data objects, indexed by day, including an entry for all
 	days of the month for each element of years
 jsonWorkbookEntries: JSON object of all the Excel entries
-years: array of years that the data spans
+year: the year of the selected data
 */
-function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, years) {
+function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, month, year) {
 
 	/*********************/
 	/* Useful variables. */
@@ -307,14 +302,10 @@ function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, years) {
 	    	var visualExists = checkIfAnyExpanded(callDataPerDay);
 
 	    	if (!visualExists) {   // no visualization exists yet, so create a new one
-	    		// the month of the callDataPerDay entry
-	    		var month = d.month;
-
-	    		// convert i to a day index [0, 30]
-	    		var day = i %= 31;
-
 		    	// get the call data for the selected day
-		    	var callDataPerHour = getCallDataPerHour(jsonWorkbookEntries, month, day, years);
+		    	var callDataPerHour = getCallDataPerHour(jsonWorkbookEntries, i, month, year);
+
+		    	console.log(callDataPerHour);
 
 		    	// show an hour-level view of the call data for the selected month
 		    	visualizeHourLevel(callDataPerHour, jsonWorkbookEntries);
@@ -358,14 +349,8 @@ function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, years) {
 					// clear expanded of all entries
 					clearExpanded(callDataPerDay);
 
-					// the month of the callDataPerDay entry
-		    		var month = d.month;
-
-		    		// convert i to a day index [0, 30]
-		    		var day = i %= 31;
-
 			    	// get the call data for the selected day
-			    	var callDataPerHour = getCallDataPerHour(jsonWorkbookEntries, month, day, years);
+			    	var callDataPerHour = getCallDataPerHour(jsonWorkbookEntries, i, month, year);
 
 			    	// revisualize the data
 			    	revisualizeHourLevel(callDataPerHour, jsonWorkbookEntries);

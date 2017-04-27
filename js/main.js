@@ -60,8 +60,8 @@ $(document).ready(function() {
 			//visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, years);
 
 			// get the call data per day
-			var month = 1;   // explicitly check the month of February
-			var callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, month, years);
+			//var month = 1;   // explicitly check the month of February
+			//var callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, month, years);
 
 			// scroll to the bottom of the page
 			$("body").delay(100).animate({ scrollTop: $(document).height()-$(window).height() }, 750);
