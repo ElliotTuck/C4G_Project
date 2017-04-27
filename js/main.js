@@ -54,8 +54,8 @@ $(document).ready(function() {
 			var callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, years);
 			console.log(callDataPerMonth);
 
-			// visualize the data at a high level
-			visualizeHighLevel(callDataPerMonth, jsonWorkbookEntries, years);
+			// visualize the data at the month level
+			visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, years);
 
 			// get the call data per day
 			var month = 1;   // explicitly check the month of February

@@ -8,7 +8,7 @@ callDataPerMonth: array of call data objects, indexed by month, including an ent
 jsonWorkbookEntries: JSON object of all the Excel entries
 years: array of years that the data spans
 */
-function visualizeHighLevel(callDataPerMonth, jsonWorkbookEntries, years) {
+function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, years) {
 
 	/*********************/
 	/* Useful variables. */
@@ -57,8 +57,8 @@ function visualizeHighLevel(callDataPerMonth, jsonWorkbookEntries, years) {
 		    	// get the call data for the selected month
 		    	var callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, month, years);
 
-		    	// show a mid-level view of the call data for the selected month
-		    	visualizeMidLevel(callDataPerDay, jsonWorkbookEntries, years);
+		    	// show a day-level view of the call data for the selected month
+		    	visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, years);
 
 		    	// scroll to the bottom of the page (for a nice visual effect)
 				$("body").delay(100)
@@ -145,7 +145,7 @@ callDataPerDay: array of call data objects, indexed by day, including an entry f
 jsonWorkbookEntries: JSON object of all the Excel entries
 years: array of years that the data spans
 */
-function visualizeMidLevel(callDataPerDay, jsonWorkbookEntries, years) {
+function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, years) {
 
 	/*********************/
 	/* Useful variables. */
@@ -198,8 +198,8 @@ function visualizeMidLevel(callDataPerDay, jsonWorkbookEntries, years) {
 		    	// get the call data for the selected day
 		    	var callDataPerHour = getCallDataPerHour(jsonWorkbookEntries, month, day, years);
 
-		    	// show a low-level view of the call data for the selected month
-		    	visualizeLowLevel(callDataPerHour, jsonWorkbookEntries);
+		    	// show an hour-level view of the call data for the selected month
+		    	visualizeHourLevel(callDataPerHour, jsonWorkbookEntries);
 
 		    	// scroll to the bottom of the page
 				$("body").delay(100)
@@ -250,7 +250,7 @@ function visualizeMidLevel(callDataPerDay, jsonWorkbookEntries, years) {
 			    	var callDataPerHour = getCallDataPerHour(jsonWorkbookEntries, month, day, years);
 
 			    	// revisualize the data
-			    	revisualizeLowLevel(callDataPerHour, jsonWorkbookEntries);
+			    	revisualizeHourLevel(callDataPerHour, jsonWorkbookEntries);
 
 			    	// a visualization has been made for this month
 			    	d.expanded = true;
@@ -352,7 +352,7 @@ callDataPerHour: array of call data objects, indexed by day, including an entry 
 	hours in a day for each year
 jsonWorkbookEntries: JSON object of all the Excel entries
 */
-function visualizeLowLevel(callDataPerHour, jsonWorkbookEntries) {
+function visualizeHourLevel(callDataPerHour, jsonWorkbookEntries) {
 
 	/*********************/
 	/* Useful variables. */
@@ -465,8 +465,8 @@ function visualizeLowLevel(callDataPerHour, jsonWorkbookEntries) {
 		.call(xAxis);
 }
 
-// Revisualize the low-level data.
-function revisualizeLowLevel(callDataPerHour, jsonWorkbookEntries) {
+// Revisualize the hour-level data.
+function revisualizeHourLevel(callDataPerHour, jsonWorkbookEntries) {
 	var width = window.innerWidth - 100,
 		height = window.innerHeight / 2,
 		barpadding = 1,
