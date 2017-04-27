@@ -11,7 +11,12 @@ $(document).ready(function() {
 	$("#submit-btn").click(function() {
 		if (jsonWorkbookEntries && !expanded) {
 			// convert workbook to JSON
-
+			for (var i = 0; i < checkedMonths.length; i++) {
+				var monthName = convertMonth(i);
+				var isChecked = $("#" + monthName).is(":checked");
+				checkedMonths[i] = isChecked;
+			}
+			// At this point, checkedMonths contains valid info about which checkbox is checked
 			var missedCallRule = $("#missed-call-rule").val();
 			console.debug(missedCallRule)
 			labelMissed(jsonWorkbookEntries, 40, false); // 40 seconds
@@ -116,9 +121,13 @@ var dropListener = {
 			cleanJSONWorkbook(jsonWorkbookEntries); // clean the data
 			var activeMonths = getActiveMonths(jsonWorkbookEntries);
 			for (var i = 0; i < activeMonths.length; i++) {
-				if (!activeMonths[i]) {
-					var monthName = convertMonth(i);
-					$("#" + monthName).attr("disabled", true)
+				var monthName = convertMonth(i);
+				var monthCheckbox = $("#" + monthName)
+				if (!activeMonths[i]) { // month is not active
+					monthCheckbox.attr("disabled", true)
+				} else { // month is active
+					monthCheckbox.prop("checked", true);
+					//monthCheckbox.attr("") make bold
 				}
 			}
 			checkedMonths = activeMonths;
