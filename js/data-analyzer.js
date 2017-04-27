@@ -251,7 +251,7 @@ function getCallDataPerMonth(jsonWorkbookEntries, years) {
             callDataPerMonth.push(obj);
         }
     }
-  }
+
 
   // aggregate the call data
   for (var j = 0; j < years.length; j++) {
@@ -290,6 +290,7 @@ function getActiveMonths(jsonWorkbookEntries) {
 
 function getActiveYears(jsonWorkbookEntries) {
   return jsonWorkbookEntries.filter(function(item, i, arr) {
+    console.debug(item);
     return arr.indexOf(item.Date.getYear()) === i;
   });
 }
