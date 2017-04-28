@@ -34,8 +34,6 @@ function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries) {
 	var	svg = d3.select("#svg-year-level")
 		.attr("width", width)
 		.attr("height", height);
-	// A boolean describing whether or not a lower-level chart has been displayed.
-	var	expanded = false;
 
 	/***********************/
 	/* Visualize the data. */
@@ -48,19 +46,92 @@ function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries) {
 	    .enter()
 	    .append("g")
 	    .on("click", function(d, i) {
-	    	if (!expanded) {
-		    	// get the call data for the selected year
+	    	// check if a lower-level visualization exists for any of the years of the data
+	    	var visualExists = checkIfAnyExpanded(callDataPerYear);
+
+	    	if (!visualExists) {   // no visualization exists yet, so create a new one
+		    	// get the per-month call data for the selected year
 		    	var callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, years[i]);
 
 		    	// show a month-level view of the call data for the selected year
 		    	visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, years[i]);
 
-		    	// scroll to the bottom of the page (for a nice visual effect)
+		    	// scroll to the bottom of the page
 				$("body").delay(100)
 					.animate({ scrollTop: $(document).height() - $(window).height() }, 750);
 
-				// month-level visualization has been created
-				expanded = true;
+				// lower-level visualization has been created for this year
+				d.expanded = true;
+				d3.select(this)
+					.select(".made-call-bar")
+					  .classed("selected-made-call-bar", true);
+				d3.select(this)
+					.select(".missed-call-bar")
+					  .classed("selected-missed-call-bar", true);
+			} else {   // a lower-level visualization already exists
+				// whether or not the lower-level visualization is for this year
+	    		var expanded = d.expanded;
+
+				if (expanded) {   // the present lower-level visualization is for this year
+					// delete the visualization (and any others below it)
+					d3.select("#svg-month-level")
+					  .selectAll("g")
+						.remove();
+					d3.select("#svg-month-level")
+						.transition()
+						.duration(1000)
+						.attr("width", 0)
+						.attr("height", 0);
+					d3.select("#svg-day-level")
+					  .selectAll("g")
+						.remove();
+					d3.select("#svg-day-level")
+						.transition()
+						.duration(1000)
+						.attr("width", 0)
+						.attr("height", 0);
+					d3.select("#svg-hour-level")
+					  .selectAll("g")
+						.remove();
+					d3.select("#svg-hour-level")
+						.transition()
+						.duration(1000)
+						.attr("width", 0)
+						.attr("height", 0);
+
+					// lower-level visualization for this year has been removed
+					d.expanded = false;
+					d3.select(this)
+						.select(".made-call-bar")
+						  .classed("selected-made-call-bar", false);
+					d3.select(this)
+						.select(".missed-call-bar")
+						  .classed("selected-missed-call-bar", false);
+				} else {   // the present lower-level visualization is not for this year
+					// clear expanded of all entries
+					clearExpanded(callDataPerYear);
+
+			    	// get the per-month call data for the selected year
+			    	var callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, years[i]);
+
+			    	// revisualize the data
+			    	revisualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries);
+
+			    	// a visualization has been made for this year
+			    	d.expanded = true;
+			    	d3.select("#svg-year-level")
+			    		.select(".selected-made-call-bar")
+			    		  .classed("selected-made-call-bar", false);
+			    	d3.select("#svg-year-level")
+			    		.select(".selected-missed-call-bar")
+			    		  .classed("selected-missed-call-bar", false);
+			    	d3.select(this)
+						.select(".made-call-bar")
+						  .classed("selected-made-call-bar", true);
+					d3.select(this)
+						.select(".missed-call-bar")
+						  .classed("selected-missed-call-bar", true);
+		    	}
 			}
 	    });
 
@@ -309,6 +380,60 @@ function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, year) {
 	svg.append("g")
 		.attr("transform", "translate(0," + (height - axisPadding) + ")")
 		.call(xAxis);
+}
+
+// Revisualize the month-level data.
+function revisualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries) {
+	var width = window.innerWidth - 100,
+		height = window.innerHeight / 2,
+		barpadding = 1,
+		axisPadding = 25,
+		labelPadding = 13,
+		maxCalls = d3.max(callDataPerMonth, function(d) { return d.numCallsTotal; }),
+		heightScale = d3.scale.linear()
+				  			  .domain([0, maxCalls])
+				  			  .range([0, height - axisPadding]),
+		xScale = d3.scale.ordinal()
+						 .domain(d3.range(callDataPerMonth.length))
+						 .rangeRoundBands([0, width], 0.05),
+		svg = d3.select("body")
+				.select("#svg-Month-level");
+
+	// bind the new data to the old DOM elements
+	var gUpdate = svg.selectAll("g")
+				     .data(callDataPerMonth);
+
+	// update bars
+	gUpdate.select(".made-call-bar")
+		  .transition()
+		  .delay(function(d, i) { return (i / callDataPerMonth.length) * 1000; })
+		  .duration(500)
+		  .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls); })
+		  .attr("height", function(d) { return heightScale(d.numMadeCalls); });
+
+	gUpdate.select(".missed-call-bar")
+		  .transition()
+		  .delay(function(d, i) { return (i / callDataPerMonth.length) * 1000; })
+		  .duration(500)
+	      .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls) - heightScale(d.numMissedCalls); })
+	      .attr("height", function(d) { return heightScale(d.numMissedCalls); });
+
+	// update bar labels
+	gUpdate.select(".made-call-bar-label")
+	      .transition()
+	      .delay(function(d, i) { return (i / callDataPerMonth.length) * 1000; })
+	      .duration(500)
+		  .text(function(d) { return d.numMadeCalls; })
+	      .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls) + labelPadding; })
+	      .style("opacity", function(d) { return d.numMadeCalls < 2 ? 0 : 1; });
+
+	gUpdate.select(".missed-call-bar-label")
+	      .transition()
+	      .delay(function(d, i) { return (i / callDataPerMonth.length) * 1000; })
+	      .duration(500)
+		  .text(function(d) { return d.numMissedCalls; })
+	      .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numCallsTotal) + labelPadding; })
+	      .style("opacity", function(d) { return d.numMissedCalls < 2 ? 0 : 1; });
 }
 
 /**
