@@ -14,56 +14,56 @@ $(document).ready(function() {
 		if (jsonWorkbookEntries && !expanded) {
 			var userOptions = processUserOptions();
 			if (typeof(userOptions) != "string") { // if type IS a string, that means it's an error message. DON'T generate graphs.
-				console.debug(userOptions);
-				labelMissed(jsonWorkbookEntries, userOptions["missedCallRule"], false);
-				// convert workbook to JSON
-				var missedCounter = 0;
-				var i = 0;
-				for (var int = 0; i < jsonWorkbookEntries.length; i++) {
-					if (jsonWorkbookEntries[i].Missed) {
-						missedCounter++;
-					}
+			console.debug(userOptions);
+			labelMissed(jsonWorkbookEntries, userOptions["missedCallRule"], false);
+			// convert workbook to JSON
+			var missedCounter = 0;
+			var i = 0;
+			for (var int = 0; i < jsonWorkbookEntries.length; i++) {
+				if (jsonWorkbookEntries[i].Missed) {
+					missedCounter++;
 				}
-				// display total number of missed calls
-				d3.select("#initial-info")
-				.append("h1")
-				.text("Number of missed calls in this data: " + missedCounter);
-
-				// display date information of first entry
-				var e1 = jsonWorkbookEntries[0];
-				var e1Date = e1.Date.getDate();
-				var e1Month = convertMonth(e1.Date.getMonth());
-				var e1Year = e1.Date.getFullYear();
-				var e1String = e1Date + " " + e1Month + " " + e1Year;
-				d3.select("#initial-info")
-				.append("h1")
-				.text("Date of first entry: " + e1String);
-
-				// get the call data per year
-				years = getActiveYears(jsonWorkbookEntries);
-				var callDataPerYear = getCallDataPerYear(jsonWorkbookEntries, years);
-
-				// visualize the data at the year level
-				visualizeYearLevel(callDataPerYear, jsonWorkbookEntries);
-
-				// scroll to the bottom of the page
-				$("body").delay(100).animate({ scrollTop: $(document).height()-$(window).height() }, 750);
-
-				expanded = true;
-			} else {
-				d3.select("#initial-info")
-				.append("h1")
-				.text("Error: " + userOptions);
 			}
-		} else if (!expanded) {
-			alert("No file selected!");
-		}
-	});
+			// display total number of missed calls
+			d3.select("#initial-info")
+			.append("h1")
+			.text("Number of missed calls in this data: " + missedCounter);
 
-	// alert user of possible loss of functionality due to outdated browser
-	if (!window.File || !window.FileReader || !window.FileList) {
-		alert("The File APIs are not fully supported in this browser.");
+			// display date information of first entry
+			var e1 = jsonWorkbookEntries[0];
+			var e1Date = e1.Date.getDate();
+			var e1Month = convertMonth(e1.Date.getMonth());
+			var e1Year = e1.Date.getFullYear();
+			var e1String = e1Date + " " + e1Month + " " + e1Year;
+			d3.select("#initial-info")
+			.append("h1")
+			.text("Date of first entry: " + e1String);
+
+			// get the call data per year
+			years = getActiveYears(jsonWorkbookEntries);
+			var callDataPerYear = getCallDataPerYear(jsonWorkbookEntries, years);
+
+			// visualize the data at the year level
+			visualizeYearLevel(callDataPerYear, jsonWorkbookEntries);
+
+			// scroll to the bottom of the page
+			$("body").delay(100).animate({ scrollTop: $(document).height()-$(window).height() }, 750);
+
+			expanded = true;
+		} else {
+			d3.select("#initial-info")
+			.append("h1")
+			.text("Error: " + userOptions);
+		}
+	} else if (!expanded) {
+		alert("No file selected!");
 	}
+});
+
+// alert user of possible loss of functionality due to outdated browser
+if (!window.File || !window.FileReader || !window.FileList) {
+	alert("The File APIs are not fully supported in this browser.");
+}
 });
 
 // handle events
@@ -184,14 +184,19 @@ function processUserOptions() {
 	userOptions["checkedMonths"] = checkedMonths;
 	// At this point, checkedMonths contains valid info about which checkbox is checked
 	var missedCallRule = $("#missed-call-rule").val();
+	var missedCallRuleMin = $("#missed-call-rule").attr("min"); // 1 sec
+	console.debug(missedCallRuleMin)
+	var missedCallRuleMax = $("#missed-call-rule").attr("max"); // 120 sec
+	console.debug(missedCallRuleMax)
 	// checking missedCallRule is valid
-	if (missedCallRule != "" && missedCallRule <= 0) { // "" is when the form is not filled out
-	errorMessage = "Missed call rule is less than 0.";
-	return errorMessage;
-} else {
-	var defaultMissedCallRule = 40;
-	userOptions["missedCallRule"] = (missedCallRule == "") ? defaultMissedCallRule : parseInt(missedCallRule);
-}
+	// "" is when the form is not filled out
+	if (missedCallRule != "" && (missedCallRule < missedCallRuleMin || missedCallRule > missedCallRuleMax)) {
+		errorMessage = (missedCallRule < missedCallRuleMin) ? "Missed call rule is less than 1 second." : "Missed call rule is more than 120 seconds"
+		return errorMessage;
+	} else {
+		var defaultMissedCallRule = 40;
+		userOptions["missedCallRule"] = (missedCallRule == "") ? defaultMissedCallRule : parseInt(missedCallRule);
+	}
 // Checking calendar for validity of selected start and end dates
 var selectedStartDate = new Date($("#start-calendar").val());
 var startDateStamp = Date.parse(selectedStartDate);
