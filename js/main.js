@@ -195,7 +195,7 @@ function processUserOptions() {
 		return errorMessage;
 	} else {
 		var defaultMissedCallRule = 40;
-		userOptions["missedCallRule"] = (missedCallRule == "") ? defaultMissedCallRule : parseInt(missedCallRule);
+		userOptions["missedCallRule"] = (missedCallRule == "") ? defaultMissedCallRule : missedCallRuleInt;
 	}
 // Checking calendar for validity of selected start and end dates
 var selectedStartDate = new Date($("#start-calendar").val());
