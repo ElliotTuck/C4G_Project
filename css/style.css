@@ -29,7 +29,9 @@ hr {
 	padding: 10px;
 }
 
-#options {  }
+#options h1 {
+	text-indent: 0%;
+}
 
 #options div {
 	float: left;
