@@ -93,9 +93,6 @@ var dropListener = {
 
 		file = event.dataTransfer.files[0];   // File object
 
-		// indicate that file has loaded by displaying its properties on the page
-
-
 		// read the file
 		var reader = new FileReader();
 	    var name = file.name;

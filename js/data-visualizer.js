@@ -30,6 +30,14 @@ function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries) {
 	var	xScale = d3.scale.ordinal()
 		.domain(d3.range(callDataPerYear.length))
 		.rangeRoundBands([0, width], 0.05);
+	// An ordinal scale used to find the maximum width of a bar.
+	var maxXScale = d3.scale.ordinal()
+		.domain(d3.range(12))
+		.rangeRoundBands([0, width], 0.05);
+	// The maximum width of a bar.
+	var maxWidth = maxXScale.rangeBand();
+	// The bar width.
+	var barWidth = xScale.rangeBand() > maxWidth ? maxWidth : xScale.rangeBand();
 	// The SVG element for year-level visualizations.
 	var	svg = d3.select("#svg-year-level")
 		.attr("width", width)
@@ -140,17 +148,27 @@ function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries) {
 	// create bars for made calls
 	gEnter.append("rect")
 	    .attr("class", "made-call-bar")
-	    .attr("x", function(d, i) { return xScale(i); })
+	    .attr("x", function(d, i) { return xScale(i) + (xScale.rangeBand() - maxXScale.rangeBand()) / 2; })
+	    .attr("y", height - axisPadding)
+	    .attr("width", barWidth)
+	    .attr("height", 0)
+	    .transition()
+	    .delay(function(d, i) { return 500 + (i / callDataPerYear.length) * 1000; })
+	    .duration(500)
 	    .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls); })
-	    .attr("width", xScale.rangeBand())
 	    .attr("height", function(d) { return heightScale(d.numMadeCalls); })
 
 	// create bars for missed calls
 	gEnter.append("rect")
         .attr("class", "missed-call-bar")
-        .attr("x", function(d, i) { return xScale(i); })
+        .attr("x", function(d, i) { return xScale(i) + (xScale.rangeBand() - maxXScale.rangeBand()) / 2; })
+        .attr("y", height - axisPadding)
+        .attr("width", barWidth)
+        .attr("height", 0)
+        .transition()
+        .delay(function(d, i) { return 500 + (i / callDataPerYear.length) * 1000; })
+        .duration(500)
         .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls) - heightScale(d.numMissedCalls); })
-        .attr("width", xScale.rangeBand())
         .attr("height", function(d) { return heightScale(d.numMissedCalls); })
 
 	/* create bar labels */
@@ -158,22 +176,34 @@ function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries) {
 	// create bar labels for made calls
 	gEnter.append("text")
 	    .text(function(d) { return d.numMadeCalls; })
-        .attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; })
-        .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls) + labelPadding; })
+        .attr("x", function(d, i) { return xScale(i) + (xScale.rangeBand() - maxXScale.rangeBand()) / 2 + barWidth / 2; })
+        .attr("y", height - axisPadding)
         .attr("text-anchor", "middle")
         .style("font-family", "sans-serif")
         .style("fill", "white")
-        .style("font-size", "12px");
+        .style("font-size", "12px")
+        .style("opacity", 0)
+        .transition()
+        .delay(function(d, i) { return 500 + (i / callDataPerYear.length) * 1000; })
+        .duration(500)
+        .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls) + labelPadding; })
+        .style("opacity", function(d) { return heightScale(d.numMadeCalls) < labelPadding * 1.2 ? 0 : 1; });
 
     // create bar labels for missed calls
 	gEnter.append("text")
 	    .text(function(d) { return d.numMissedCalls; })
-        .attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; })
-        .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numCallsTotal) + labelPadding; })
+        .attr("x", function(d, i) { return xScale(i) + (xScale.rangeBand() - maxXScale.rangeBand()) / 2 + barWidth / 2; })
+        .attr("y", height - axisPadding)
         .attr("text-anchor", "middle")
         .style("font-family", "sans-serif")
         .style("fill", "white")
-        .style("font-size", "12px");
+        .style("font-size", "12px")
+        .style("opacity", 0)
+        .transition()
+        .delay(function(d, i) { return 500 + (i / callDataPerYear.length) * 1000; })
+        .duration(500)
+        .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numCallsTotal) + labelPadding; })
+        .style("opacity", function(d) { return heightScale(d.numMissedCalls) < labelPadding * 1.2 ? 0 : 1; });
 
     /* create the horizontal axis */
     var d = [];
@@ -324,16 +354,26 @@ function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, year) {
 	gEnter.append("rect")
 	    .attr("class", "made-call-bar")
 	    .attr("x", function(d, i) { return xScale(i); })
-	    .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls); })
+	    .attr("y", height - axisPadding)
 	    .attr("width", xScale.rangeBand())
+	    .attr("height", 0)
+	    .transition()
+	    .delay(function(d, i) { return 500 + (i / callDataPerMonth.length) * 1000; })
+	    .duration(500)
+	    .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls); })
 	    .attr("height", function(d) { return heightScale(d.numMadeCalls); })
 
 	// create bars for missed calls
 	gEnter.append("rect")
         .attr("class", "missed-call-bar")
         .attr("x", function(d, i) { return xScale(i); })
-        .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls) - heightScale(d.numMissedCalls); })
+        .attr("y", height - axisPadding)
         .attr("width", xScale.rangeBand())
+        .attr("height", 0)
+        .transition()
+        .delay(function(d, i) { return 500 + (i / callDataPerMonth.length) * 1000; })
+        .duration(500)
+        .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls) - heightScale(d.numMissedCalls); })
         .attr("height", function(d) { return heightScale(d.numMissedCalls); })
 
 	/* create bar labels */
@@ -342,21 +382,33 @@ function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, year) {
 	gEnter.append("text")
 	    .text(function(d) { return d.numMadeCalls; })
         .attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; })
-        .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls) + labelPadding; })
+        .attr("y", height - axisPadding)
         .attr("text-anchor", "middle")
         .style("font-family", "sans-serif")
         .style("fill", "white")
-        .style("font-size", "12px");
+        .style("font-size", "12px")
+        .style("opacity", 0)
+        .transition()
+        .delay(function(d, i) { return 500 + (i / callDataPerMonth.length) * 1000; })
+        .duration(500)
+        .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls) + labelPadding; })
+        .style("opacity", function(d) { return heightScale(d.numMadeCalls) < labelPadding * 1.2 ? 0 : 1; });
 
     // create bar labels for missed calls
 	gEnter.append("text")
 	    .text(function(d) { return d.numMissedCalls; })
         .attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; })
-        .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numCallsTotal) + labelPadding; })
+        .attr("y", height - axisPadding)
         .attr("text-anchor", "middle")
         .style("font-family", "sans-serif")
         .style("fill", "white")
-        .style("font-size", "12px");
+        .style("font-size", "12px")
+        .style("opacity", 0)
+        .transition()
+        .delay(function(d, i) { return 500 + (i / callDataPerMonth.length) * 1000; })
+        .duration(500)
+        .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numCallsTotal) + labelPadding; })
+        .style("opacity", function(d) { return heightScale(d.numMissedCalls) < labelPadding * 1.2 ? 0 : 1; });
 
     /* create the horizontal axis */
     var d = [];
@@ -425,7 +477,7 @@ function revisualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries) {
 	      .duration(500)
 		  .text(function(d) { return d.numMadeCalls; })
 	      .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls) + labelPadding; })
-	      .style("opacity", function(d) { return d.numMadeCalls < 2 ? 0 : 1; });
+	      .style("opacity", function(d) { return heightScale(d.numMadeCalls) < labelPadding * 1.2 ? 0 : 1; });
 
 	gUpdate.select(".missed-call-bar-label")
 	      .transition()
@@ -433,7 +485,7 @@ function revisualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries) {
 	      .duration(500)
 		  .text(function(d) { return d.numMissedCalls; })
 	      .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numCallsTotal) + labelPadding; })
-	      .style("opacity", function(d) { return d.numMissedCalls < 2 ? 0 : 1; });
+	      .style("opacity", function(d) { return heightScale(d.numMissedCalls) < labelPadding * 1.2 ? 0 : 1; });
 }
 
 /**
@@ -565,7 +617,7 @@ function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, month, year) {
 	gEnter.append("rect")
 	    .attr("class", "made-call-bar")
 	    .attr("x", function(d, i) { return xScale(i); })
-	    .attr("y", height)
+	    .attr("y", height - axisPadding)
 	    .attr("width", xScale.rangeBand())
 	    .attr("height", 0)
 	    .transition()
@@ -578,7 +630,7 @@ function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, month, year) {
 	gEnter.append("rect")
         .attr("class", "missed-call-bar")
         .attr("x", function(d, i) { return xScale(i); })
-        .attr("y", height)
+        .attr("y", height - axisPadding)
         .attr("width", xScale.rangeBand())
         .attr("height", 0)
 	    .transition()
@@ -593,7 +645,7 @@ function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, month, year) {
 	gEnter.append("text")
 	    .text(function(d) { return d.numMadeCalls; })
         .attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; })
-        .attr("y", height)
+        .attr("y", height - axisPadding)
         .attr("text-anchor", "middle")
         .style("font-family", "sans-serif")
         .style("fill", "white")
@@ -603,13 +655,13 @@ function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, month, year) {
         .delay(function(d, i) { return 500 + (i / callDataPerDay.length) * 1000; })
         .duration(500)
         .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls) + labelPadding; })
-        .style("opacity", 1);
+        .style("opacity", function(d) { return heightScale(d.numMadeCalls) < labelPadding * 1.2 ? 0 : 1; });
 
     // create bar labels for missed calls
 	gEnter.append("text")
 	    .text(function(d) { return d.numMissedCalls; })
         .attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; })
-        .attr("y", height)
+        .attr("y", height - axisPadding)
         .attr("text-anchor", "middle")
         .style("font-family", "sans-serif")
         .style("fill", "white")
@@ -619,7 +671,7 @@ function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, month, year) {
         .delay(function(d, i) { return 500 + (i / callDataPerDay.length) * 1000; })
         .duration(500)
         .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numCallsTotal) + labelPadding; })
-        .style("opacity", 1);
+        .style("opacity", function(d) { return heightScale(d.numMissedCalls) < labelPadding * 1.2 ? 0 : 1; });
 
     /* create the horizontal axis */
 	var xAxis = d3.svg.axis()
@@ -673,7 +725,7 @@ function revisualizeDayLevel(callDataPerDay, jsonWorkbookEntries) {
 	      .duration(500)
 		  .text(function(d) { return d.numMadeCalls; })
 	      .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls) + labelPadding; })
-	      .style("opacity", function(d) { return d.numMadeCalls < 2 ? 0 : 1; });
+	      .style("opacity", function(d) { return heightScale(d.numMadeCalls) < labelPadding * 1.2 ? 0 : 1; });
 
 	gUpdate.select(".missed-call-bar-label")
 	      .transition()
@@ -681,7 +733,7 @@ function revisualizeDayLevel(callDataPerDay, jsonWorkbookEntries) {
 	      .duration(500)
 		  .text(function(d) { return d.numMissedCalls; })
 	      .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numCallsTotal) + labelPadding; })
-	      .style("opacity", function(d) { return d.numMissedCalls < 2 ? 0 : 1; });
+	      .style("opacity", function(d) { return heightScale(d.numMissedCalls) < labelPadding * 1.2 ? 0 : 1; });
 }
 
 /**
@@ -740,7 +792,7 @@ function visualizeHourLevel(callDataPerHour, jsonWorkbookEntries) {
 	gEnter.append("rect")
 		    .attr("class", "made-call-bar")
 		    .attr("x", function(d, i) { return xScale(i); })
-		    .attr("y", height)
+		    .attr("y", height - axisPadding)
 		    .attr("width", xScale.rangeBand())
 		    .attr("height", 0)
 		    .transition()
@@ -753,7 +805,7 @@ function visualizeHourLevel(callDataPerHour, jsonWorkbookEntries) {
 	gEnter.append("rect")
 	        .attr("class", "missed-call-bar")
 	        .attr("x", function(d, i) { return xScale(i); })
-	        .attr("y", height)
+	        .attr("y", height - axisPadding)
 	        .attr("width", xScale.rangeBand())
 	        .attr("height", 0)
 		    .transition()
@@ -769,7 +821,7 @@ function visualizeHourLevel(callDataPerHour, jsonWorkbookEntries) {
 		    .attr("class", "made-call-bar-label")
 		    .text(function(d) { return d.numMadeCalls; })
 	        .attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; })
-	        .attr("y", height)
+	        .attr("y", height - axisPadding)
 	        .attr("text-anchor", "middle")
 	        .style("font-family", "sans-serif")
 	        .style("fill", "white")
@@ -779,14 +831,14 @@ function visualizeHourLevel(callDataPerHour, jsonWorkbookEntries) {
 	        .delay(function(d, i) { return 500 + (i / callDataPerHour.length) * 1000; })
 	        .duration(500)
 	        .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls) + labelPadding; })
-	        .style("opacity", function(d) { return d.numMadeCalls < 2 ? 0 : 1; });
+	        .style("opacity", function(d) { return heightScale(d.numMadeCalls) < labelPadding * 1.2 ? 0 : 1; });
 
 	// create bar labels for missed calls
 	gEnter.append("text")
 			.attr("class", "missed-call-bar-label")
 			.text(function(d) { return d.numMissedCalls; })
 	    	.attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; })
-	    	.attr("y", height)
+	    	.attr("y", height - axisPadding)
 	    	.attr("text-anchor", "middle")
 	    	.style("font-family", "sans-serif")
 	    	.style("fill", "white")
@@ -796,7 +848,7 @@ function visualizeHourLevel(callDataPerHour, jsonWorkbookEntries) {
 	    	.delay(function(d, i) { return 500 + (i / callDataPerHour.length) * 1000; })
 	    	.duration(500)
 	    	.attr("y", function(d) { return (height - axisPadding) - heightScale(d.numCallsTotal) + labelPadding; })
-	    	.style("opacity", function(d) { return d.numMissedCalls < 2 ? 0 : 1; });
+	    	.style("opacity", function(d) { return heightScale(d.numMissedCalls) < labelPadding * 1.2 ? 0 : 1; });
 
 	/* create the horizontal axis */
 	var xAxis = d3.svg.axis()
@@ -850,7 +902,7 @@ function revisualizeHourLevel(callDataPerHour, jsonWorkbookEntries) {
 	      .duration(500)
 		  .text(function(d) { return d.numMadeCalls; })
 	      .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numMadeCalls) + labelPadding; })
-	      .style("opacity", function(d) { return d.numMadeCalls < 2 ? 0 : 1; });
+	      .style("opacity", function(d) { return heightScale(d.numMadeCalls) < labelPadding * 1.2 ? 0 : 1; });
 
 	gUpdate.select(".missed-call-bar-label")
 	      .transition()
@@ -858,7 +910,7 @@ function revisualizeHourLevel(callDataPerHour, jsonWorkbookEntries) {
 	      .duration(500)
 		  .text(function(d) { return d.numMissedCalls; })
 	      .attr("y", function(d) { return (height - axisPadding) - heightScale(d.numCallsTotal) + labelPadding; })
-	      .style("opacity", function(d) { return d.numMissedCalls < 2 ? 0 : 1; });
+	      .style("opacity", function(d) { return heightScale(d.numMissedCalls) < labelPadding * 1.2 ? 0 : 1; });
 }
 
 /**

@@ -29,51 +29,51 @@
 */
 
 function deleteRedundantFields(jsonWorkbookEntry) {
-  var entry = jsonWorkbookEntry;
-  delete entry["Trunk Type"];
-  delete entry.isTAProc;
-  delete entry["Call HoldDuration"]
-  delete entry["Source Country Code"]
-  delete entry.ACDExt
-  delete entry["Transfer Ext"]
-  delete entry.AgentName
-  delete entry.Termtime
-  delete entry["Party Duration"]
-  delete entry.PartyIPPort
-  delete entry.PartyType
-  delete entry.PartyCodeType
-  delete entry.WaitDuration
-  delete entry.VMDuration
-  delete entry.RecDuration
-  delete entry.AADuration
-  delete entry.HoldDuration
-  delete entry.RingDuration
-  delete entry.PartyWrapDuration
+    var entry = jsonWorkbookEntry;
+    delete entry["Trunk Type"];
+    delete entry.isTAProc;
+    delete entry["Call HoldDuration"]
+    delete entry["Source Country Code"]
+    delete entry.ACDExt
+    delete entry["Transfer Ext"]
+    delete entry.AgentName
+    delete entry.Termtime
+    delete entry["Party Duration"]
+    delete entry.PartyIPPort
+    delete entry.PartyType
+    delete entry.PartyCodeType
+    delete entry.WaitDuration
+    delete entry.VMDuration
+    delete entry.RecDuration
+    delete entry.AADuration
+    delete entry.HoldDuration
+    delete entry.RingDuration
+    delete entry.PartyWrapDuration
 }
 
 function cleanJSONWorkbook(jsonWorkbookEntries) {
-  var entry;
-  for (var i = 0; i < jsonWorkbookEntries.length; i++) {
-    entry = jsonWorkbookEntries[i];
-    deleteRedundantFields(entry);
-    cleanDates(entry);
-    cleanDuration(entry);
-  }
+    var entry;
+    for (var i = 0; i < jsonWorkbookEntries.length; i++) {
+        entry = jsonWorkbookEntries[i];
+        deleteRedundantFields(entry);
+        cleanDates(entry);
+        cleanDuration(entry);
+    }
 }
 
 function cleanDates(jsonWorkbookEntry) {
-  jsonWorkbookEntry.Date = new Date(jsonWorkbookEntry["Date/Time"]);
-  delete jsonWorkbookEntry["Date/Time"];
-  jsonWorkbookEntry["End Time"] = new Date(jsonWorkbookEntry["End Time"]);
+    jsonWorkbookEntry.Date = new Date(jsonWorkbookEntry["Date/Time"]);
+    delete jsonWorkbookEntry["Date/Time"];
+    jsonWorkbookEntry["End Time"] = new Date(jsonWorkbookEntry["End Time"]);
 }
 
 function cleanDuration(jsonWorkbookEntry) {
-  var parsedDuration = parseFloat(jsonWorkbookEntry.Duration);
-  if (parsedDuration != NaN) {
-    jsonWorkbookEntry.Duration = parsedDuration;
-  } else {
-    delete jsonWorkbookEntry.Duration;
-  }
+    var parsedDuration = parseFloat(jsonWorkbookEntry.Duration);
+    if (parsedDuration != NaN) {
+        jsonWorkbookEntry.Duration = parsedDuration;
+    } else {
+        delete jsonWorkbookEntry.Duration;
+    }
 }
 /**
 Labels each as missed or not missed by creating/modifying a boolean attribute "Missed", based on the
@@ -81,28 +81,28 @@ missedDurationRule parameter. The parameter "inclusive" specifies whether to lab
 duration == missedDurationRule. If inclusive is true, then the entry is labeled as missed.
 **/
 function labelMissed(jsonWorkbookArray, missedDurationRule, inclusive) {
-  var entry;
-  for (var i = 0; i < jsonWorkbookArray.length; i++) {
-    entry = jsonWorkbookArray[i];
-    if (entry.Direction == "IN" && entry.Duration > 1) {
-      var duration = entry.Duration;
-      if (duration != undefined) { // Duration exists
-        if (duration < missedDurationRule) {
-          entry.Missed = true;
-        } else if (duration > missedDurationRule) {
-          entry.Missed = false;
-        } else { // duration == missedDurationRule
-          if (inclusive) {
-            entry.Missed = true;
-          } else {
-            entry.Missed = false;
-          }
+    var entry;
+    for (var i = 0; i < jsonWorkbookArray.length; i++) {
+        entry = jsonWorkbookArray[i];
+        if (entry.Direction == "IN" && entry.Duration > 1) {
+            var duration = entry.Duration;
+            if (duration != undefined) { // Duration exists
+                if (duration < missedDurationRule) {
+                    entry.Missed = true;
+                } else if (duration > missedDurationRule) {
+                    entry.Missed = false;
+                } else { // duration == missedDurationRule
+                    if (inclusive) {
+                        entry.Missed = true;
+                    } else {
+                        entry.Missed = false;
+                    }
+                }
+            }
+        } else {
+          jsonWorkbookArray.splice(i, 1);
         }
-      }
-    } else {
-      jsonWorkbookArray.splice(i, 1);
     }
-  }
 }
 
 
@@ -112,46 +112,46 @@ Convert the given month number to its corresponding month string. Input ranges
 between 0 and 11, inclusive, where 0 maps to January and 11 maps to December.
 **/
 function convertMonth(monthNum) {
-  switch (monthNum) {
+    switch (monthNum) {
     case 0:
-      return "January";
-      break;
+        return "January";
+        break;
     case 1:
-      return "February";
-      break;
+        return "February";
+        break;
     case 2:
-      return "March";
-      break;
+        return "March";
+        break;
     case 3:
-      return "April";
-      break;
+        return "April";
+        break;
     case 4:
-      return "May";
-      break;
+        return "May";
+        break;
     case 5:
-      return "June";
-      break;
+        return "June";
+        break;
     case 6:
-      return "July";
-      break;
+        return "July";
+        break;
     case 7:
-      return "August";
-      break;
+        return "August";
+        break;
     case 8:
-      return "September";
-      break;
+        return "September";
+        break;
     case 9:
-      return "October";
-      break;
+        return "October";
+        break;
     case 10:
-      return "November";
-      break;
+        return "November";
+        break;
     case 11:
-      return "December";
-      break;
+        return "December";
+        break;
     default:
-      return null;
-  }
+        return null;
+    }
 }
 
 /**
