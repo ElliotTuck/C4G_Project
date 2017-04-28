@@ -187,11 +187,11 @@ function processUserOptions() {
 	var missedCallRuleMin = $("#missed-call-rule").attr("min"); // 1 sec
 	console.debug(missedCallRuleMin)
 	var missedCallRuleMax = $("#missed-call-rule").attr("max"); // 120 sec
-	console.debug(missedCallRuleMax)
+	var missedCallRuleInt = parseInt(missedCallRule);
 	// checking missedCallRule is valid
 	// "" is when the form is not filled out
-	if (missedCallRule != "" && (missedCallRule < missedCallRuleMin || missedCallRule > missedCallRuleMax)) {
-		errorMessage = (missedCallRule < missedCallRuleMin) ? "Missed call rule is less than 1 second." : "Missed call rule is more than 120 seconds"
+	if (missedCallRule != "" && (missedCallRuleInt < missedCallRuleMin || missedCallRuleInt > missedCallRuleMax)) {
+		errorMessage = (missedCallRuleInt < missedCallRuleMin) ? "Missed call rule is less than 1 second." : "Missed call rule is more than 120 seconds"
 		return errorMessage;
 	} else {
 		var defaultMissedCallRule = 40;
