@@ -54,8 +54,21 @@ hr {
 	font-size: 20px;
 }
 
-#months-options, #custom-date-range-options {
-	width: 50%;
+#months-options, #custom-date-range-options, #missed-call-rule-options {
+	width: 33.33%;
+}
+
+#custom-date-range-options {
+	text-align: center;
+}
+
+#custom-range-form-div {
+	position: relative;
+	padding-left: 18%;
+}
+
+#missed-call-rule-options {
+	text-align: center;
 }
 
 #start-date {

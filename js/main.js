@@ -11,45 +11,47 @@ $(document).ready(function() {
 
 	// toggle the visualization upon clicking the submit button
 	$("#submit-btn").click(function() {
-		if (jsonWorkbookEntries && !expanded) {
-			// convert workbook to JSON
-			labelMissed(jsonWorkbookEntries, 40, false); // 40 seconds
-			var missedCounter = 0;
-			var i = 0;
-			for (var int = 0; i < jsonWorkbookEntries.length; i++) {
-				if (jsonWorkbookEntries[i].Missed) {
-					missedCounter++;
+		if (jsonWorkbookEntries) {
+			if(!expanded) {
+				// convert workbook to JSON
+				labelMissed(jsonWorkbookEntries, 40, false); // 40 seconds
+				var missedCounter = 0;
+				var i = 0;
+				for (var int = 0; i < jsonWorkbookEntries.length; i++) {
+					if (jsonWorkbookEntries[i].Missed) {
+						missedCounter++;
+					}
 				}
+				var userResult = processUserOptions();
+				console.debug(userResult);
+				// display total number of missed calls
+				d3.select("#initial-info")
+				  .append("h1")
+				    .text("Number of missed calls in this data: " + missedCounter);
+
+				// display date information of first entry
+				var e1 = jsonWorkbookEntries[0];
+				var e1Date = e1.Date.getDate();
+				var e1Month = convertMonth(e1.Date.getMonth());
+				var e1Year = e1.Date.getFullYear();
+				var e1String = e1Date + " " + e1Month + " " + e1Year;
+				d3.select("#initial-info")
+				  .append("h1")
+				    .text("Date of first entry: " + e1String);
+
+				// get the call data per year
+				years = getActiveYears(jsonWorkbookEntries);
+				var callDataPerYear = getCallDataPerYear(jsonWorkbookEntries, years);
+
+				// visualize the data at the year level
+				visualizeYearLevel(callDataPerYear, jsonWorkbookEntries);
+
+				// scroll to the bottom of the page
+				$("body").delay(100).animate({ scrollTop: $(document).height()-$(window).height() }, 750);
+
+				expanded = true;
 			}
-			var userResult = processUserOptions();
-			console.debug(userResult);
-			// display total number of missed calls
-			d3.select("#initial-info")
-			  .append("h1")
-			    .text("Number of missed calls in this data: " + missedCounter);
-
-			// display date information of first entry
-			var e1 = jsonWorkbookEntries[0];
-			var e1Date = e1.Date.getDate();
-			var e1Month = convertMonth(e1.Date.getMonth());
-			var e1Year = e1.Date.getFullYear();
-			var e1String = e1Date + " " + e1Month + " " + e1Year;
-			d3.select("#initial-info")
-			  .append("h1")
-			    .text("Date of first entry: " + e1String);
-
-			// get the call data per year
-			years = getActiveYears(jsonWorkbookEntries);
-			var callDataPerYear = getCallDataPerYear(jsonWorkbookEntries, years);
-
-			// visualize the data at the year level
-			visualizeYearLevel(callDataPerYear, jsonWorkbookEntries);
-
-			// scroll to the bottom of the page
-			$("body").delay(100).animate({ scrollTop: $(document).height()-$(window).height() }, 750);
-
-			expanded = true;
-		} else if (!expanded) {
+		} else {
 			alert("No file selected!");
 		}
 	});
