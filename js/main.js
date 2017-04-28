@@ -21,7 +21,8 @@ $(document).ready(function() {
 					missedCounter++;
 				}
 			}
-			processUserOptions();
+			var userResult = processUserOptions();
+			console.debug(userResult);
 			// display total number of missed calls
 			d3.select("#initial-info")
 			  .append("h1")
@@ -154,6 +155,17 @@ function to_json(workbook) {
     return result;
 }
 
+/**
+	Validates user input from month checkboxes, start and end date calendars, and the missed call rule input box.
+	Returns an object with the following structure if ALL input is valid:
+	{
+		"checkedMonths" : [array of booleans (indices 0 to 11) indicating if a month was checked by the user].
+		"missedCallRule" : integer (40 if not selected by user).
+		"startDate" : Date object indicating the date (inclusive) from which the data should be analyzed.
+		"endDate" : Date object indicating the date (inclusive) up to which data should be analyzed.
+	}
+}
+**/
 function processUserOptions() {
 	var userOptions = {};
 	var errorMessage;
@@ -168,24 +180,43 @@ function processUserOptions() {
 	var missedCallRule = $("#missed-call-rule").val();
 	// checking missedCallRule is valid
 	if (missedCallRule != "" && missedCallRule <= 0) { // "" is when the form is not filled out
-		errorMessage = "Missed call rule is less than 0";
+		errorMessage = "Missed call rule is less than 0.";
 		return errorMessage;
 	} else {
 		var defaultMissedCallRule = 40;
-		userOptions["missedCallRule"] = (missedCallRule == "") ? defaultMissedCallRule : missedCallRule;
+		userOptions["missedCallRule"] = (missedCallRule == "") ? defaultMissedCallRule : parseInt(missedCallRule);
 	}
-	var startDate = new Date($("#start-calendar").val());
-	var startDateStamp = Date.parse(startDate);
-	var endDate = new Date($("#end-calendar").val());
-	var endDateStamp = Date.parse(endDate)
-	if (isNaN(startDate)  ^ isNaN(endDate)) {
-		errorMessage = "The start or end date is not valid";
+	// Checking calendar for validity of selected start and end dates
+	var selectedStartDate = new Date($("#start-calendar").val());
+	var startDateStamp = Date.parse(selectedStartDate);
+	var selectedEndDate = new Date($("#end-calendar").val());
+	var endDateStamp = Date.parse(selectedEndDate)
+	var startMin = new Date($("#start-calendar").attr("min"));
+	var startMax = new Date($("#start-calendar").attr("max"));
+	var endMin = new Date($("#end-calendar").attr("min"));
+	var endMax = new Date($("#end-calendar").attr("max"));
+	if (isNaN(selectedStartDate) ^ isNaN(selectedEndDate)) {
+		errorMessage = "Both or neither start and end dates much be selected.";
 		return errorMessage;
+	} else if (isNaN(selectedStartDate) && isNaN(selectedEndDate)) { // both dates are invalid or not selected
+		userOptions["startDate"] = startMin;
+		userOptions["endDate"] = endMax;
+	} else {
+		if (selectedStartDate.getTime() < startMin.getTime() || selectedStartDate.getTime() > startMax.getTime()) {
+			errorMessage = "The start date selected is not in the range of data provided.";
+			return errorMessage;
+		} else if (selectedEndDate.getTime() < endMin.getTime() || selectedEndDate.getTime()  > endMax.getTime()) {
+			errorMessage = " The end date selected is not in the range of data provided."
+			return errorMessage;
+		} else if (selectedStartDate.getTime() > selectedEndDate.getTime()) {
+			errorMessage = "The selected start date is later than the selected end date."
+			return errorMessage;
+		} else {
+			userOptions["startDate"] = selectedStartDate;
+			userOptions["endDate"] = selectedEndDate
+		}
 	}
-	var startMin = $("#start-calendar").attr("min");
-	var startMax = $("#start-calendar").attr("max");
-	var endMin = $("#end-calendar").attr("min");
-	var endMax = $("#end-calendar").attr("max");
+	return userOptions;
 }
 
 
