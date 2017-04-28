@@ -202,7 +202,7 @@ var startMax = new Date($("#start-calendar").attr("max"));
 var endMin = new Date($("#end-calendar").attr("min"));
 var endMax = new Date($("#end-calendar").attr("max"));
 if (isNaN(selectedStartDate) ^ isNaN(selectedEndDate)) {
-	errorMessage = "Both or neither start and end dates much be selected.";
+	errorMessage = "Both or neither start and end dates must be selected.";
 	return errorMessage;
 } else if (isNaN(selectedStartDate) && isNaN(selectedEndDate)) { // both dates are invalid or not selected
 	userOptions["startDate"] = startMin;
@@ -212,7 +212,7 @@ if (isNaN(selectedStartDate) ^ isNaN(selectedEndDate)) {
 		errorMessage = "The start date selected is not in the range of data provided.";
 		return errorMessage;
 	} else if (selectedEndDate.getTime() < endMin.getTime() || selectedEndDate.getTime()  > endMax.getTime()) {
-		errorMessage = " The end date selected is not in the range of data provided."
+		errorMessage = "The end date selected is not in the range of data provided."
 		return errorMessage;
 	} else if (selectedStartDate.getTime() > selectedEndDate.getTime()) {
 		errorMessage = "The selected start date is later than the selected end date."
