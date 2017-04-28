@@ -53,7 +53,7 @@ $(document).ready(function() {
 			} else {
 				d3.select("#initial-info")
 				.append("h1")
-				.text("Error:" + userOptions);
+				.text("Error: " + userOptions);
 			}
 		} else if (!expanded) {
 			alert("No file selected!");
