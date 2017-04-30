@@ -223,7 +223,10 @@ function processUserOptions() {
 		userOptions["startDate"] = startMin;
 		userOptions["endDate"] = endMax;
 	} else {
+		selectedStartDate.setUTCMilliseconds(selectedStartDate.getUTCMilliseconds() + 14400000);
+		selectedEndDate.setUTCMilliseconds(selectedEndDate.getUTCMilliseconds() + 100800000);
 		if (selectedStartDate.getTime() < startMin.getTime() || selectedStartDate.getTime() > startMax.getTime()) {
+			console.log("userOptions startTime: " + userOptions.startDate.getTime());
 			errorMessage = "The start date selected is not in the range of data provided.";
 			return errorMessage;
 		} else if (selectedEndDate.getTime() < endMin.getTime() || selectedEndDate.getTime()  > endMax.getTime()) {
@@ -233,8 +236,6 @@ function processUserOptions() {
 			errorMessage = "The selected start date is later than the selected end date."
 			return errorMessage;
 		} else {
-			selectedStartDate.setUTCMilliseconds(selectedStartDate.getUTCMilliseconds() + 14400000);
-			selectedEndDate.setUTCMilliseconds(selectedEndDate.getUTCMilliseconds() + 100800000);
 			userOptions["startDate"] = selectedStartDate;
 			userOptions["endDate"] = selectedEndDate
 		}
