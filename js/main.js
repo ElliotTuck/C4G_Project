@@ -9,6 +9,7 @@ var callDataPerYear;
 var callDataPerMonth;
 var callDataPerDay;
 var callDataPerHour;
+var month;
 
 $(document).ready(function() {
 	var expanded = false;

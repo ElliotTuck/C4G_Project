@@ -55,7 +55,7 @@ function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries) {
 	    .append("g")
 	    .on("click", function(d, i) {
 	    	// check if a lower-level visualization exists for any of the years of the data
-	    	var visualExists = checkIfAnyExpanded(callDataPerYear);
+	    	var visualExists = checkIfAnyExpanded(window.callDataPerYear);
 
 	    	if (!visualExists) {   // no visualization exists yet, so create a new one
 		    	// get the per-month call data for the selected year
@@ -117,7 +117,39 @@ function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries) {
 						  .classed("selected-missed-call-bar", false);
 				} else {   // the present lower-level visualization is not for this year
 					// clear expanded of all entries
-					clearExpanded(callDataPerYear);
+					clearExpanded(window.callDataPerDay);
+					clearExpanded(window.callDataPerMonth);
+					clearExpanded(window.callDataPerYear);
+
+					// remove possible hour and day-level visualizations
+					d3.select("#svg-day-level")
+			    		.select(".selected-made-call-bar")
+			    		  .classed("selected-made-call-bar", false);
+			    	d3.select("#svg-day-level")
+			    		.select(".selected-missed-call-bar")
+			    		  .classed("selected-missed-call-bar", false);
+			    	d3.select("#svg-month-level")
+			    		.select(".selected-made-call-bar")
+			    		  .classed("selected-made-call-bar", false);
+			    	d3.select("#svg-month-level")
+			    		.select(".selected-missed-call-bar")
+			    		  .classed("selected-missed-call-bar", false);
+			    	d3.select("#svg-hour-level")
+					  .selectAll("g")
+						.remove();
+					d3.select("#svg-hour-level")
+						.transition()
+						.duration(1000)
+						.attr("width", 0)
+						.attr("height", 0);
+					d3.select("#svg-day-level")
+					  .selectAll("g")
+						.remove();
+					d3.select("#svg-day-level")
+						.transition()
+						.duration(1000)
+						.attr("width", 0)
+						.attr("height", 0);
 
 			    	// get the per-month call data for the selected year
 			    	callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, years[i]);
@@ -271,11 +303,12 @@ function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, year) {
 	    	var visualExists = checkIfAnyExpanded(window.callDataPerMonth);
 
 	    	if (!visualExists) {   // no visualization exists yet, so create a new one
+	    		month = i;
 		    	// get the per-day call data for the selected month
-		    	callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, i, year);
+		    	callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, month, year);
 
 		    	// show a day-level view of the call data for the selected month
-		    	visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, i, year);
+		    	visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, month, year);
 
 		    	// scroll to the bottom of the page
 				$("body").delay(100)
@@ -321,9 +354,10 @@ function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, year) {
 						.select(".missed-call-bar")
 						  .classed("selected-missed-call-bar", false);
 				} else {   // the present lower-level visualization is not for this month
+					month = i;
 					// clear expanded of all entries
-					clearExpanded(callDataPerDay);
-					clearExpanded(callDataPerMonth);
+					clearExpanded(window.callDataPerDay);
+					clearExpanded(window.callDataPerMonth);
 
 					// remove possible hour-level visualization
 					d3.select("#svg-day-level")
@@ -342,7 +376,7 @@ function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, year) {
 						.attr("height", 0);
 
 			    	// get the per-day call data for the selected month
-			    	callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, i, year);
+			    	callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, month, year);
 
 			    	// revisualize the data
 			    	revisualizeDayLevel(callDataPerDay, jsonWorkbookEntries);
@@ -562,7 +596,7 @@ function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, month, year) {
 
 	    	if (!visualExists) {   // no visualization exists yet, so create a new one
 		    	// get the per-hour call data for the selected day
-		    	callDataPerHour = getCallDataPerHour(jsonWorkbookEntries, i, month, year);
+		    	callDataPerHour = getCallDataPerHour(jsonWorkbookEntries, i, window.month, year);
 
 		    	// show an hour-level view of the call data for the selected day
 		    	visualizeHourLevel(callDataPerHour, jsonWorkbookEntries);
@@ -607,7 +641,7 @@ function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, month, year) {
 					clearExpanded(window.callDataPerDay);
 
 			    	// get the per-hour call data for the selected day
-			    	callDataPerHour = getCallDataPerHour(jsonWorkbookEntries, i, month, year);
+			    	callDataPerHour = getCallDataPerHour(jsonWorkbookEntries, i, window.month, year);
 
 			    	// revisualize the data
 			    	revisualizeHourLevel(callDataPerHour, jsonWorkbookEntries);
