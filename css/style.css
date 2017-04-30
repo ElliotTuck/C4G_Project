@@ -9,12 +9,12 @@ h1 {
 }
 
 hr {
-    height: 1px;
-    border: 0;
-    border-top: 4px #bc0033;
-    border-style: dotted;
-    margin: 1em 0;
-    padding: 0;
+	height: 1px;
+	border: 0;
+	border-top: 4px #bc0033;
+	border-style: dotted;
+	margin: 1em 0;
+	padding: 0;
 }
 
 #drop-area {

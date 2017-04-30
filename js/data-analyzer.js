@@ -101,8 +101,8 @@ function labelMissed(jsonWorkbookArray, missedDurationRule, inclusive) {
             }
         } else {
           jsonWorkbookArray.splice(i, 1);
-        }
-    }
+      }
+  }
 }
 
 
@@ -113,43 +113,43 @@ between 0 and 11, inclusive, where 0 maps to January and 11 maps to December.
 **/
 function convertMonth(monthNum) {
     switch (monthNum) {
-    case 0:
+        case 0:
         return "January";
         break;
-    case 1:
+        case 1:
         return "February";
         break;
-    case 2:
+        case 2:
         return "March";
         break;
-    case 3:
+        case 3:
         return "April";
         break;
-    case 4:
+        case 4:
         return "May";
         break;
-    case 5:
+        case 5:
         return "June";
         break;
-    case 6:
+        case 6:
         return "July";
         break;
-    case 7:
+        case 7:
         return "August";
         break;
-    case 8:
+        case 8:
         return "September";
         break;
-    case 9:
+        case 9:
         return "October";
         break;
-    case 10:
+        case 10:
         return "November";
         break;
-    case 11:
+        case 11:
         return "December";
         break;
-    default:
+        default:
         return null;
     }
 }
@@ -203,9 +203,9 @@ function getCallDataPerYear(jsonWorkbookEntries, years) {
             var entryTime = entry.Date.getTime();
             // only add data corresponding to the proper year, and only if it fits the user options
             if (entryYear === years[i] && checkedMonths[entryMonth] && entryTime >= userOptions.startDate.getTime()
-                    && entryTime <= userOptions.endDate.getTime()) {
+                && entryTime <= userOptions.endDate.getTime()) {
                 callDataPerYear[i].numCallsTotal++;        // increment the total number of calls by one
-                if (entry.Missed) {
+            if (entry.Missed) {
                     callDataPerYear[i].numMissedCalls++;   // if the call was missed, increment total number of missed calls
                 } else {
                     callDataPerYear[i].numMadeCalls++;     // else increment total number of made calls
@@ -265,9 +265,9 @@ function getCallDataPerMonth(jsonWorkbookEntries, year) {
         var entryTime = entry.Date.getTime();
         // only add data for the specified year, and only if it fits the user options
         if (entryYear == year && checkedMonths[entryMonth] && entryTime >= userOptions.startDate.getTime()
-                && entryTime <= userOptions.endDate.getTime()) {
+            && entryTime <= userOptions.endDate.getTime()) {
             callDataPerMonth[entryMonth].numCallsTotal++;        // increment the total number of calls by one
-            if (entry.Missed) {
+        if (entry.Missed) {
                 callDataPerMonth[entryMonth].numMissedCalls++;   // if the call was missed, increment total number of missed calls
             } else {
                 callDataPerMonth[entryMonth].numMadeCalls++;     // else increment total number of made calls
@@ -302,9 +302,9 @@ function getActiveYears(jsonWorkbookEntries) {
     if (typeof(uniqueDict[year]) == "undefined") {
       uniqueYears.push(year);
       uniqueDict[year] = 0;
-    }
   }
-  return uniqueYears;
+}
+return uniqueYears;
 }
 
 function sortByDate(jsonWorkbookEntries) {
@@ -361,9 +361,9 @@ function getCallDataPerDay(jsonWorkbookEntries, month, year) {
         var entryTime = entry.Date.getTime();
         // only add data for the given month of the given year, and only if it fits the user options
         if (entryMonth === month && entryYear === year && checkedMonths[entryMonth] && entryTime >= userOptions.startDate.getTime()
-                && entryTime <= userOptions.endDate.getTime()) {
+            && entryTime <= userOptions.endDate.getTime()) {
             var entryDate = entry.Date.getDate();
-            var callObj = callDataPerDay[entryDate - 1];
+        var callObj = callDataPerDay[entryDate - 1];
             callObj.numCallsTotal++;        // increment total number of calls on this day by one
             if (entry.Missed) {
                 callObj.numMissedCalls++;   // if call was missed, increment total number of missed calls
@@ -421,9 +421,9 @@ function getCallDataPerHour(jsonWorkbookEntries, day, month, year) {
         // only add data for the given day of the given month of the given year, and only
         // if it fits the user options
         if ((entryDate - 1) === day && entryMonth === month && entryYear === year && checkedMonths[entryMonth]
-                && entryTime >= userOptions.startDate.getTime() && entryTime <= userOptions.endDate.getTime()) {
+            && entryTime >= userOptions.startDate.getTime() && entryTime <= userOptions.endDate.getTime()) {
             var entryHour = entry.Date.getHours();
-            var callObj = callDataPerHour[entryHour];
+        var callObj = callDataPerHour[entryHour];
             callObj.numCallsTotal++;        // increment total number of calls on this day by one
             if (entry.Missed) {
                 callObj.numMissedCalls++;   // if call was missed, increment total number of missed calls
@@ -441,12 +441,12 @@ function getActiveMonths(jsonWorkbookEntries) {
   var entry;
   for (var i = 0; i < 12; i++) { // Initialize all months to inactive
     monthArray[i] = false;
-  }
-  for (var i = 0; i < jsonWorkbookEntries.length; i++) {
+}
+for (var i = 0; i < jsonWorkbookEntries.length; i++) {
     entry = jsonWorkbookEntries[i];
     monthArray[entry.Date.getMonth()] = true
-  }
-  return monthArray;
+}
+return monthArray;
 }
 
 function getActiveYears(jsonWorkbookEntries) {
@@ -457,8 +457,8 @@ function getActiveYears(jsonWorkbookEntries) {
     if (typeof(uniqueDict[year]) == "undefined") {
       uniqueYears.push(year);
       uniqueDict[year] = 0;
-    }
   }
+}
   //console.debug(uniqueYears);
   return uniqueYears;
 }
@@ -466,6 +466,6 @@ function getActiveYears(jsonWorkbookEntries) {
 function sortByDate(jsonWorkbookEntries) {
   jsonWorkbookEntries.sort(function(a, b) {
     return a.Date - b.Date;
-  });
+});
   return jsonWorkbookEntries;
 }

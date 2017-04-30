@@ -20,7 +20,7 @@ $(document).ready(function() {
 		if (jsonWorkbookEntries && !expanded) {
 			var userOptions = processUserOptions();
 			if (typeof(userOptions) != "string") { // if type IS a string, that means it's an error message. DON'T generate graphs.
-			console.debug(userOptions);
+				console.debug(userOptions);
 			labelMissed(jsonWorkbookEntries, userOptions["missedCallRule"], false);
 			// convert workbook to JSON
 			var missedCounter = 0;
@@ -249,17 +249,17 @@ function processUserOptions() {
 
 /**
 	Convenience function that converts a date to dash-separated string to be included in html.
-**/
-function dateToDashString(date) {
-	var day = date.getDate();
-	var month = date.getMonth() + 1;
-	var year = date.getFullYear();
-	if (day < 10) {
-		day = "0" + day
+	**/
+	function dateToDashString(date) {
+		var day = date.getDate();
+		var month = date.getMonth() + 1;
+		var year = date.getFullYear();
+		if (day < 10) {
+			day = "0" + day
+		}
+		if (month < 10) {
+			month = "0" + month;
+		}
+		var dateString = year + "-" + month + "-" + day;
+		return dateString;
 	}
-	if (month < 10) {
-		month = "0" + month;
-	}
-	var dateString = year + "-" + month + "-" + day;
-	return dateString;
-}
