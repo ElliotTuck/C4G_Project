@@ -5,6 +5,10 @@ var highlightedDropColor = "gray"   // color of drop-area when a file is being d
 var jsonWorkbookEntries;
 var checkedMonths;
 var years;
+var callDataPerYear;
+var callDataPerMonth;
+var callDataPerDay;
+var callDataPerHour;
 
 $(document).ready(function() {
 	var expanded = false;
@@ -41,7 +45,7 @@ $(document).ready(function() {
 
 			// get the call data per year
 			years = getActiveYears(jsonWorkbookEntries);
-			var callDataPerYear = getCallDataPerYear(jsonWorkbookEntries, years);
+			callDataPerYear = getCallDataPerYear(jsonWorkbookEntries, years);
 
 			// visualize the data at the year level
 			visualizeYearLevel(callDataPerYear, jsonWorkbookEntries);
@@ -197,37 +201,38 @@ function processUserOptions() {
 		var defaultMissedCallRule = 40;
 		userOptions["missedCallRule"] = (missedCallRule == "") ? defaultMissedCallRule : parseInt(missedCallRule);
 	}
-// Checking calendar for validity of selected start and end dates
-var selectedStartDate = new Date($("#start-calendar").val());
-var startDateStamp = Date.parse(selectedStartDate);
-var selectedEndDate = new Date($("#end-calendar").val());
-var endDateStamp = Date.parse(selectedEndDate)
-var startMin = new Date($("#start-calendar").attr("min"));
-var startMax = new Date($("#start-calendar").attr("max"));
-var endMin = new Date($("#end-calendar").attr("min"));
-var endMax = new Date($("#end-calendar").attr("max"));
-if (isNaN(selectedStartDate) ^ isNaN(selectedEndDate)) {
-	errorMessage = "Both or neither start and end dates must be selected.";
-	return errorMessage;
-} else if (isNaN(selectedStartDate) && isNaN(selectedEndDate)) { // both dates are invalid or not selected
-	userOptions["startDate"] = startMin;
-	userOptions["endDate"] = endMax;
-} else {
-	if (selectedStartDate.getTime() < startMin.getTime() || selectedStartDate.getTime() > startMax.getTime()) {
-		errorMessage = "The start date selected is not in the range of data provided.";
+	// Checking calendar for validity of selected start and end dates
+	var selectedStartDate = new Date($("#start-calendar").val());
+	var startDateStamp = Date.parse(selectedStartDate);
+	var selectedEndDate = new Date($("#end-calendar").val());
+	var endDateStamp = Date.parse(selectedEndDate)
+	var startMin = new Date($("#start-calendar").attr("min"));
+	var startMax = new Date($("#start-calendar").attr("max"));
+	var endMin = new Date($("#end-calendar").attr("min"));
+	var endMax = new Date($("#end-calendar").attr("max"));
+	if (isNaN(selectedStartDate) ^ isNaN(selectedEndDate)) {
+		errorMessage = "Both or neither start and end dates must be selected.";
 		return errorMessage;
-	} else if (selectedEndDate.getTime() < endMin.getTime() || selectedEndDate.getTime()  > endMax.getTime()) {
-		errorMessage = "The end date selected is not in the range of data provided."
-		return errorMessage;
-	} else if (selectedStartDate.getTime() > selectedEndDate.getTime()) {
-		errorMessage = "The selected start date is later than the selected end date."
-		return errorMessage;
+	} else if (isNaN(selectedStartDate) && isNaN(selectedEndDate)) { // both dates are invalid or not selected
+		userOptions["startDate"] = startMin;
+		userOptions["endDate"] = endMax;
 	} else {
-		userOptions["startDate"] = selectedStartDate;
-		userOptions["endDate"] = selectedEndDate
+		if (selectedStartDate.getTime() < startMin.getTime() || selectedStartDate.getTime() > startMax.getTime()) {
+			errorMessage = "The start date selected is not in the range of data provided.";
+			return errorMessage;
+		} else if (selectedEndDate.getTime() < endMin.getTime() || selectedEndDate.getTime()  > endMax.getTime()) {
+			errorMessage = "The end date selected is not in the range of data provided."
+			return errorMessage;
+		} else if (selectedStartDate.getTime() > selectedEndDate.getTime()) {
+			errorMessage = "The selected start date is later than the selected end date."
+			return errorMessage;
+		} else {
+			userOptions["startDate"] = selectedStartDate;
+			userOptions["endDate"] = selectedEndDate
+		}
 	}
-}
-return userOptions;
+
+	return userOptions;
 }
 
 

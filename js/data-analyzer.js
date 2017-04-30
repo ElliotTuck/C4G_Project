@@ -197,8 +197,9 @@ function getCallDataPerYear(jsonWorkbookEntries, years) {
         for (var j = 0; j < jsonWorkbookEntries.length; j++) {
             var entry = jsonWorkbookEntries[j];
             var entryYear = entry.Date.getFullYear();
-            // only add data corresponding to the proper year
-            if (entryYear === years[i]) {
+            var entryMonth = entry.Date.getMonth();
+            // only add data corresponding to the proper year, and only if it fits the user options
+            if (entryYear === years[i] && checkedMonths[entryMonth]) {
                 callDataPerYear[i].numCallsTotal++;        // increment the total number of calls by one
                 if (entry.Missed) {
                     callDataPerYear[i].numMissedCalls++;   // if the call was missed, increment total number of missed calls
@@ -257,8 +258,8 @@ function getCallDataPerMonth(jsonWorkbookEntries, year) {
         var entry = jsonWorkbookEntries[i];
         var entryMonth = entry.Date.getMonth();
         var entryYear = entry.Date.getFullYear();
-        // only add data for the specified year
-        if (entryYear == year) {
+        // only add data for the specified year, and only if it fits the user options
+        if (entryYear == year && checkedMonths[entryMonth]) {
             callDataPerMonth[entryMonth].numCallsTotal++;        // increment the total number of calls by one
             if (entry.Missed) {
                 callDataPerMonth[entryMonth].numMissedCalls++;   // if the call was missed, increment total number of missed calls
@@ -350,8 +351,8 @@ function getCallDataPerDay(jsonWorkbookEntries, month, year) {
         var entry = jsonWorkbookEntries[i];
         var entryMonth = entry.Date.getMonth();
         var entryYear = entry.Date.getFullYear();
-        // only add data for the given month of the given year
-        if (entryMonth === month && entryYear === year) {
+        // only add data for the given month of the given year, and only if it fits the user options
+        if (entryMonth === month && entryYear === year && checkedMonths[entryMonth]) {
             var entryDate = entry.Date.getDate();
             var callObj = callDataPerDay[entryDate - 1];
             callObj.numCallsTotal++;        // increment total number of calls on this day by one
@@ -407,7 +408,9 @@ function getCallDataPerHour(jsonWorkbookEntries, day, month, year) {
         var entryDate = entry.Date.getDate();
         var entryMonth = entry.Date.getMonth();
         var entryYear = entry.Date.getFullYear();
-        if ((entryDate - 1) === day && entryMonth === month && entryYear === year) {
+        // only add data for the given day of the given month of the given year, and only
+        // if it fits the user options
+        if ((entryDate - 1) === day && entryMonth === month && entryYear === year && checkedMonths[entryMonth]) {
             var entryHour = entry.Date.getHours();
             var callObj = callDataPerHour[entryHour];
             callObj.numCallsTotal++;        // increment total number of calls on this day by one

@@ -59,7 +59,7 @@ function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries) {
 
 	    	if (!visualExists) {   // no visualization exists yet, so create a new one
 		    	// get the per-month call data for the selected year
-		    	var callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, years[i]);
+		    	callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, years[i]);
 
 		    	// show a month-level view of the call data for the selected year
 		    	visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, years[i]);
@@ -120,7 +120,7 @@ function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries) {
 					clearExpanded(callDataPerYear);
 
 			    	// get the per-month call data for the selected year
-			    	var callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, years[i]);
+			    	callDataPerMonth = getCallDataPerMonth(jsonWorkbookEntries, years[i]);
 
 			    	// revisualize the data
 			    	revisualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries);
@@ -268,11 +268,11 @@ function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, year) {
 	    .append("g")
 	    .on("click", function(d, i) {
 	    	// check if a lower-level visualization exists for any of the months in this year
-	    	var visualExists = checkIfAnyExpanded(callDataPerMonth);
+	    	var visualExists = checkIfAnyExpanded(window.callDataPerMonth);
 
 	    	if (!visualExists) {   // no visualization exists yet, so create a new one
 		    	// get the per-day call data for the selected month
-		    	var callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, i, year);
+		    	callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, i, year);
 
 		    	// show a day-level view of the call data for the selected month
 		    	visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, i, year);
@@ -322,10 +322,27 @@ function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, year) {
 						  .classed("selected-missed-call-bar", false);
 				} else {   // the present lower-level visualization is not for this month
 					// clear expanded of all entries
+					clearExpanded(callDataPerDay);
 					clearExpanded(callDataPerMonth);
 
+					// remove possible hour-level visualization
+					d3.select("#svg-day-level")
+			    		.select(".selected-made-call-bar")
+			    		  .classed("selected-made-call-bar", false);
+			    	d3.select("#svg-day-level")
+			    		.select(".selected-missed-call-bar")
+			    		  .classed("selected-missed-call-bar", false);
+			    	d3.select("#svg-hour-level")
+					  .selectAll("g")
+						.remove();
+					d3.select("#svg-hour-level")
+						.transition()
+						.duration(1000)
+						.attr("width", 0)
+						.attr("height", 0);
+
 			    	// get the per-day call data for the selected month
-			    	var callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, i, year);
+			    	callDataPerDay = getCallDataPerDay(jsonWorkbookEntries, i, year);
 
 			    	// revisualize the data
 			    	revisualizeDayLevel(callDataPerDay, jsonWorkbookEntries);
@@ -381,6 +398,7 @@ function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, year) {
 	// create bar labels for made calls
 	gEnter.append("text")
 	    .text(function(d) { return d.numMadeCalls; })
+	    .attr("class", "made-call-bar-label")
         .attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; })
         .attr("y", height - axisPadding)
         .attr("text-anchor", "middle")
@@ -397,6 +415,7 @@ function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, year) {
     // create bar labels for missed calls
 	gEnter.append("text")
 	    .text(function(d) { return d.numMissedCalls; })
+	    .attr("class", "missed-call-bar-label")
         .attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; })
         .attr("y", height - axisPadding)
         .attr("text-anchor", "middle")
@@ -539,11 +558,11 @@ function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, month, year) {
 	    .append("g")
 	    .on("click", function(d, i) {
 	    	// check if a lower-level visualization exists for any of the days in this month
-	    	var visualExists = checkIfAnyExpanded(callDataPerDay);
+	    	var visualExists = checkIfAnyExpanded(window.callDataPerDay);
 
 	    	if (!visualExists) {   // no visualization exists yet, so create a new one
 		    	// get the per-hour call data for the selected day
-		    	var callDataPerHour = getCallDataPerHour(jsonWorkbookEntries, i, month, year);
+		    	callDataPerHour = getCallDataPerHour(jsonWorkbookEntries, i, month, year);
 
 		    	// show an hour-level view of the call data for the selected day
 		    	visualizeHourLevel(callDataPerHour, jsonWorkbookEntries);
@@ -585,10 +604,10 @@ function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, month, year) {
 						  .classed("selected-missed-call-bar", false);
 				} else {   // the present low-level visualization is not for this day
 					// clear expanded of all entries
-					clearExpanded(callDataPerDay);
+					clearExpanded(window.callDataPerDay);
 
-			    	// get the call data for the selected day
-			    	var callDataPerHour = getCallDataPerHour(jsonWorkbookEntries, i, month, year);
+			    	// get the per-hour call data for the selected day
+			    	callDataPerHour = getCallDataPerHour(jsonWorkbookEntries, i, month, year);
 
 			    	// revisualize the data
 			    	revisualizeHourLevel(callDataPerHour, jsonWorkbookEntries);
@@ -644,6 +663,7 @@ function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, month, year) {
 	// create bar labels for made calls
 	gEnter.append("text")
 	    .text(function(d) { return d.numMadeCalls; })
+	    .attr("class", "made-call-bar-label")
         .attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; })
         .attr("y", height - axisPadding)
         .attr("text-anchor", "middle")
@@ -660,6 +680,7 @@ function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, month, year) {
     // create bar labels for missed calls
 	gEnter.append("text")
 	    .text(function(d) { return d.numMissedCalls; })
+	    .attr("class", "missed-call-bar-label")
         .attr("x", function(d, i) { return xScale(i) + xScale.rangeBand() / 2; })
         .attr("y", height - axisPadding)
         .attr("text-anchor", "middle")
