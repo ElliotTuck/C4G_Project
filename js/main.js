@@ -166,14 +166,15 @@ function to_json(workbook) {
 }
 
 /**
-Validates user input from month checkboxes, start and end date calendars, and the missed call rule input box.
-Returns an object with the following structure if ALL input is valid:
-{
-"checkedMonths" : [array of booleans (indices 0 to 11) indicating if a month was checked by the user].
-"missedCallRule" : integer (40 if not selected by user).
-"startDate" : Date object indicating the date (inclusive) from which the data should be analyzed.
-"endDate" : Date object indicating the date (inclusive) up to which data should be analyzed.
-}
+	Validates user input from month checkboxes, start and end date calendars, and the missed call rule input box.
+	Returns an object with the following structure if ALL input is valid:
+	{
+		"checkedMonths" : [array of booleans (indices 0 to 11) indicating if a month was checked by the user].
+		"missedCallRule" : integer (40 if not selected by user).
+		"startDate" : Date object indicating the date (inclusive) from which the data should be analyzed.
+		"endDate" : Date object indicating the date (inclusive) up to which data should be analyzed.
+	}
+	If input is NOT valid, then a error message (string) is returned.
 }
 **/
 function processUserOptions() {
@@ -199,7 +200,7 @@ function processUserOptions() {
 		return errorMessage;
 	} else {
 		var defaultMissedCallRule = 40;
-		userOptions["missedCallRule"] = (missedCallRule == "") ? defaultMissedCallRule : parseInt(missedCallRule);
+		userOptions["missedCallRule"] = (missedCallRule == "") ? defaultMissedCallRule : missedCallRuleInt;
 	}
 	// Checking calendar for validity of selected start and end dates
 	var selectedStartDate = new Date($("#start-calendar").val());
@@ -236,6 +237,9 @@ function processUserOptions() {
 }
 
 
+/**
+	Convenience function that converts a date to dash-separated string to be included in html.
+**/
 function dateToDashString(date) {
 	var day = date.getDate();
 	var month = date.getMonth() + 1;
