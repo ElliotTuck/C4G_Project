@@ -209,20 +209,13 @@ function processUserOptions() {
 	var selectedStartDate = new Date($("#start-calendar").val());
 	var startDateStamp = Date.parse(selectedStartDate);
 	var selectedEndDate = new Date($("#end-calendar").val());
-	selectedEndDate.setUTCHours(23);
-	selectedEndDate.setUTCMinutes(59);
-	selectedEndDate.setUTCSeconds(59);
 	var endDateStamp = Date.parse(selectedEndDate)
 	var startMin = new Date($("#start-calendar").attr("min"));
+	startMin.setUTCMilliseconds(startMin.getUTCMilliseconds() + 14400000);
 	var startMax = new Date($("#start-calendar").attr("max"));
-	startMax.setUTCHours(23);
-	startMax.setUTCMinutes(59);
-	startMax.setUTCSeconds(59);
 	var endMin = new Date($("#end-calendar").attr("min"));
 	var endMax = new Date($("#end-calendar").attr("max"));
-	endMax.setUTCHours(23);
-	endMax.setUTCMinutes(59);
-	endMax.setUTCSeconds(59);
+	endMax.setUTCMilliseconds(endMax.getUTCMilliseconds() + 100800000);
 	if (isNaN(selectedStartDate) ^ isNaN(selectedEndDate)) {
 		errorMessage = "Both or neither start and end dates must be selected.";
 		return errorMessage;
@@ -240,6 +233,8 @@ function processUserOptions() {
 			errorMessage = "The selected start date is later than the selected end date."
 			return errorMessage;
 		} else {
+			selectedStartDate.setUTCMilliseconds(selectedStartDate.getUTCMilliseconds() + 14400000);
+			selectedEndDate.setUTCMilliseconds(selectedEndDate.getUTCMilliseconds() + 100800000);
 			userOptions["startDate"] = selectedStartDate;
 			userOptions["endDate"] = selectedEndDate
 		}
