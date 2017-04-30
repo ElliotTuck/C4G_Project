@@ -10,6 +10,7 @@ var callDataPerMonth;
 var callDataPerDay;
 var callDataPerHour;
 var month;
+var userOptions;
 
 $(document).ready(function() {
 	var expanded = false;
@@ -129,11 +130,12 @@ var dropListener = {
 			}
 			checkedMonths = activeMonths;
 			jsonWorkbookEntries = sortByDate(jsonWorkbookEntries);
+			console.log(jsonWorkbookEntries);
 			var minDate = dateToDashString(jsonWorkbookEntries[0].Date);
 			var maxDate = dateToDashString(jsonWorkbookEntries[jsonWorkbookEntries.length - 1].Date);
+			console.log("minDate: " + minDate);
+			console.log("maxDate: " + maxDate);
 
-			//console.debug(minDate);
-			//console.debug(maxDate);
 			$("#start-calendar").attr("min", minDate);
 			$("#start-calendar").attr("max", maxDate);
 			$("#end-calendar").attr("min", minDate);
@@ -179,7 +181,7 @@ function to_json(workbook) {
 }
 **/
 function processUserOptions() {
-	var userOptions = {};
+	userOptions = {};
 	var errorMessage;
 	// Process month checkboxes
 	for (var i = 0; i < checkedMonths.length; i++) {
@@ -191,7 +193,7 @@ function processUserOptions() {
 	// At this point, checkedMonths contains valid info about which checkbox is checked
 	var missedCallRule = $("#missed-call-rule").val();
 	var missedCallRuleMin = $("#missed-call-rule").attr("min"); // 1 sec
-	console.debug(missedCallRuleMin)
+	//console.debug(missedCallRuleMin)
 	var missedCallRuleMax = $("#missed-call-rule").attr("max"); // 120 sec
 	var missedCallRuleInt = parseInt(missedCallRule);
 	// checking missedCallRule is valid
@@ -207,11 +209,20 @@ function processUserOptions() {
 	var selectedStartDate = new Date($("#start-calendar").val());
 	var startDateStamp = Date.parse(selectedStartDate);
 	var selectedEndDate = new Date($("#end-calendar").val());
+	selectedEndDate.setUTCHours(23);
+	selectedEndDate.setUTCMinutes(59);
+	selectedEndDate.setUTCSeconds(59);
 	var endDateStamp = Date.parse(selectedEndDate)
 	var startMin = new Date($("#start-calendar").attr("min"));
 	var startMax = new Date($("#start-calendar").attr("max"));
+	startMax.setUTCHours(23);
+	startMax.setUTCMinutes(59);
+	startMax.setUTCSeconds(59);
 	var endMin = new Date($("#end-calendar").attr("min"));
 	var endMax = new Date($("#end-calendar").attr("max"));
+	endMax.setUTCHours(23);
+	endMax.setUTCMinutes(59);
+	endMax.setUTCSeconds(59);
 	if (isNaN(selectedStartDate) ^ isNaN(selectedEndDate)) {
 		errorMessage = "Both or neither start and end dates must be selected.";
 		return errorMessage;
@@ -233,6 +244,8 @@ function processUserOptions() {
 			userOptions["endDate"] = selectedEndDate
 		}
 	}
+	console.log("userOptions startTime: " + userOptions.startDate.getTime());
+	console.log("userOptions endtime: " + userOptions.endDate.getTime());
 
 	return userOptions;
 }

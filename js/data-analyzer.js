@@ -179,6 +179,8 @@ following format:
 This array will have one entry per year of data.
 **/
 function getCallDataPerYear(jsonWorkbookEntries, years) {
+    console.log("startDate: " + userOptions.startDate.getTime());
+    console.log("endDate: " + userOptions.endDate.getTime());
     // the array of call data per year
     var callDataPerYear = [];
 
@@ -198,8 +200,10 @@ function getCallDataPerYear(jsonWorkbookEntries, years) {
             var entry = jsonWorkbookEntries[j];
             var entryYear = entry.Date.getFullYear();
             var entryMonth = entry.Date.getMonth();
+            var entryTime = entry.Date.getTime();
             // only add data corresponding to the proper year, and only if it fits the user options
-            if (entryYear === years[i] && checkedMonths[entryMonth]) {
+            if (entryYear === years[i] && checkedMonths[entryMonth] && entryTime >= userOptions.startDate.getTime()
+                    && entryTime <= userOptions.endDate.getTime()) {
                 callDataPerYear[i].numCallsTotal++;        // increment the total number of calls by one
                 if (entry.Missed) {
                     callDataPerYear[i].numMissedCalls++;   // if the call was missed, increment total number of missed calls
@@ -258,8 +262,10 @@ function getCallDataPerMonth(jsonWorkbookEntries, year) {
         var entry = jsonWorkbookEntries[i];
         var entryMonth = entry.Date.getMonth();
         var entryYear = entry.Date.getFullYear();
+        var entryTime = entry.Date.getTime();
         // only add data for the specified year, and only if it fits the user options
-        if (entryYear == year && checkedMonths[entryMonth]) {
+        if (entryYear == year && checkedMonths[entryMonth] && entryTime >= userOptions.startDate.getTime()
+                && entryTime <= userOptions.endDate.getTime()) {
             callDataPerMonth[entryMonth].numCallsTotal++;        // increment the total number of calls by one
             if (entry.Missed) {
                 callDataPerMonth[entryMonth].numMissedCalls++;   // if the call was missed, increment total number of missed calls
@@ -302,10 +308,11 @@ function getActiveYears(jsonWorkbookEntries) {
 }
 
 function sortByDate(jsonWorkbookEntries) {
-  jsonWorkbookEntries.sort(function(a, b) {
-    return a.Date - b.Date;
-  });
-  return jsonWorkbookEntries;
+    jsonWorkbookEntries.sort(function(a, b) {
+        return a.Date - b.Date;
+    });
+
+    return jsonWorkbookEntries;
 }
 
 /**
@@ -351,8 +358,10 @@ function getCallDataPerDay(jsonWorkbookEntries, month, year) {
         var entry = jsonWorkbookEntries[i];
         var entryMonth = entry.Date.getMonth();
         var entryYear = entry.Date.getFullYear();
+        var entryTime = entry.Date.getTime();
         // only add data for the given month of the given year, and only if it fits the user options
-        if (entryMonth === month && entryYear === year && checkedMonths[entryMonth]) {
+        if (entryMonth === month && entryYear === year && checkedMonths[entryMonth] && entryTime >= userOptions.startDate.getTime()
+                && entryTime <= userOptions.endDate.getTime()) {
             var entryDate = entry.Date.getDate();
             var callObj = callDataPerDay[entryDate - 1];
             callObj.numCallsTotal++;        // increment total number of calls on this day by one
@@ -408,9 +417,11 @@ function getCallDataPerHour(jsonWorkbookEntries, day, month, year) {
         var entryDate = entry.Date.getDate();
         var entryMonth = entry.Date.getMonth();
         var entryYear = entry.Date.getFullYear();
+        var entryTime = entry.Date.getTime();
         // only add data for the given day of the given month of the given year, and only
         // if it fits the user options
-        if ((entryDate - 1) === day && entryMonth === month && entryYear === year && checkedMonths[entryMonth]) {
+        if ((entryDate - 1) === day && entryMonth === month && entryYear === year && checkedMonths[entryMonth]
+                && entryTime >= userOptions.startDate.getTime() && entryTime <= userOptions.endDate.getTime()) {
             var entryHour = entry.Date.getHours();
             var callObj = callDataPerHour[entryHour];
             callObj.numCallsTotal++;        // increment total number of calls on this day by one
