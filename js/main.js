@@ -2,67 +2,62 @@ var file;                           // the file to be processed
 var workbook;                       // the workbook
 var defaultDropColor = "#bc0033"    // default color of drop-area
 var highlightedDropColor = "gray"   // color of drop-area when a file is being dragged over it
-var jsonWorkbookEntries;
-var checkedMonths;
-var years;
-var callDataPerYear;
-var callDataPerMonth;
-var callDataPerDay;
-var callDataPerHour;
-var month;
-var userOptions;
+var jsonWorkbookEntries;            // the excel data in JSON form
+var checkedMonths;                  // a boolean array indicating the user's selected months
+var years;                          // an array of the years covered by the data
+var callDataPerYear;                // an array of the call data organized into aggregate yearly entries
+var callDataPerMonth;               // an array of the call data organized into aggregate monthly entries
+var callDataPerDay;                 // an array of the call data organized into aggregate daily entries
+var callDataPerHour;                // an array of the call data organized into aggregate hourly entries
+var month;                          // the currently-selected month
+var userOptions;                    // an object describing the user's input choices (along with default options)
 
+// when the page document has finished loading, perform the following function
 $(document).ready(function() {
+	// no visualizations are initially expanded
 	var expanded = false;
 
 	// toggle the visualization upon clicking the submit button
 	$("#submit-btn").click(function() {
-		if (jsonWorkbookEntries && !expanded) {
+		if (jsonWorkbookEntries && !expanded) {   // clicking on the "Generate Report" button only does anything if there is not yet a visualization
 			var userOptions = processUserOptions();
 			if (typeof(userOptions) != "string") { // if type IS a string, that means it's an error message. DON'T generate graphs.
-				console.debug(userOptions);
-			labelMissed(jsonWorkbookEntries, userOptions["missedCallRule"], false);
-			// convert workbook to JSON
-			var missedCounter = 0;
-			var i = 0;
-			for (var int = 0; i < jsonWorkbookEntries.length; i++) {
-				if (jsonWorkbookEntries[i].Missed) {
-					missedCounter++;
+				// remove any previous error messages
+				d3.select("#initial-info")
+					.select("h1")
+					.remove();
+
+				labelMissed(jsonWorkbookEntries, userOptions["missedCallRule"], false);   // determine which calls have been missed and label them as such
+				// tally up the total number of missed calls
+				var missedCounter = 0;
+				var i = 0;
+				for (var int = 0; i < jsonWorkbookEntries.length; i++) {
+					if (jsonWorkbookEntries[i].Missed) {
+						missedCounter++;
+					}
 				}
+
+				// get the call data per year
+				years = getActiveYears(jsonWorkbookEntries);
+				callDataPerYear = getCallDataPerYear(jsonWorkbookEntries, years);
+
+				// visualize the data at the year level
+				visualizeYearLevel(callDataPerYear, jsonWorkbookEntries);
+
+				// scroll to the bottom of the page (for a nice visual effect)
+				$("body").delay(100).animate({ scrollTop: $(document).height()-$(window).height() }, 750);
+
+				// the year-level visualization has been generated
+				expanded = true;
+			} else {   // there is some user error
+				d3.select("#initial-info")
+				.append("h1")
+				.text("Error: " + userOptions);
 			}
-			// display total number of missed calls
-			d3.select("#initial-info")
-			.append("h1")
-			.text("Number of missed calls in this data: " + missedCounter);
-
-			// display date information of first entry
-			var e1 = jsonWorkbookEntries[0];
-			var e1Date = e1.Date.getDate();
-			var e1Month = convertMonth(e1.Date.getMonth());
-			var e1Year = e1.Date.getFullYear();
-			var e1String = e1Date + " " + e1Month + " " + e1Year;
-			d3.select("#initial-info")
-			.append("h1")
-			.text("Date of first entry: " + e1String);
-
-			// get the call data per year
-			years = getActiveYears(jsonWorkbookEntries);
-			callDataPerYear = getCallDataPerYear(jsonWorkbookEntries, years);
-
-			// visualize the data at the year level
-			visualizeYearLevel(callDataPerYear, jsonWorkbookEntries);
-
-			// scroll to the bottom of the page
-			$("body").delay(100).animate({ scrollTop: $(document).height()-$(window).height() }, 750);
-
-			expanded = true;
-		} else {
-			d3.select("#initial-info")
-			.append("h1")
-			.text("Error: " + userOptions);
-		}
 	} else if (!expanded) {
-		alert("No file selected!");
+		d3.select("#initial-info")
+		.append("h1")
+		.text("No file selected!");
 	}
 });
 
@@ -72,7 +67,7 @@ if (!window.File || !window.FileReader || !window.FileList) {
 }
 });
 
-// handle events
+// handle drop events
 var dropListener = {
 	handleEvent: function(event) {
 		if (event.type === 'dragenter') { this.onDragEnter(event); }
@@ -104,6 +99,16 @@ var dropListener = {
 		event.preventDefault();
 		event.currentTarget.style.backgroundColor = defaultDropColor;
 
+		// remove any previous error messages
+		d3.select("#initial-info")
+			.select("h1")
+			.remove();
+
+		// indicate to the user that the file is loading
+		d3.select("#list")
+			.append("h3")
+			.text("Loading file...");
+
 		file = event.dataTransfer.files[0];   // File object
 
 		// read the file
@@ -130,11 +135,8 @@ var dropListener = {
 			}
 			checkedMonths = activeMonths;
 			jsonWorkbookEntries = sortByDate(jsonWorkbookEntries);
-			console.log(jsonWorkbookEntries);
 			var minDate = dateToDashString(jsonWorkbookEntries[0].Date);
 			var maxDate = dateToDashString(jsonWorkbookEntries[jsonWorkbookEntries.length - 1].Date);
-			console.log("minDate: " + minDate);
-			console.log("maxDate: " + maxDate);
 
 			$("#start-calendar").attr("min", minDate);
 			$("#start-calendar").attr("max", maxDate);
@@ -178,7 +180,6 @@ function to_json(workbook) {
 		"endDate" : Date object indicating the date (inclusive) up to which data should be analyzed.
 	}
 	If input is NOT valid, then a error message (string) is returned.
-}
 **/
 function processUserOptions() {
 	userOptions = {};
@@ -226,7 +227,6 @@ function processUserOptions() {
 		selectedStartDate.setUTCMilliseconds(selectedStartDate.getUTCMilliseconds() + 14400000);
 		selectedEndDate.setUTCMilliseconds(selectedEndDate.getUTCMilliseconds() + 100800000);
 		if (selectedStartDate.getTime() < startMin.getTime() || selectedStartDate.getTime() > startMax.getTime()) {
-			console.log("userOptions startTime: " + userOptions.startDate.getTime());
 			errorMessage = "The start date selected is not in the range of data provided.";
 			return errorMessage;
 		} else if (selectedEndDate.getTime() < endMin.getTime() || selectedEndDate.getTime()  > endMax.getTime()) {
@@ -240,8 +240,6 @@ function processUserOptions() {
 			userOptions["endDate"] = selectedEndDate
 		}
 	}
-	console.log("userOptions startTime: " + userOptions.startDate.getTime());
-	console.log("userOptions endtime: " + userOptions.endDate.getTime());
 
 	return userOptions;
 }
@@ -249,17 +247,17 @@ function processUserOptions() {
 
 /**
 	Convenience function that converts a date to dash-separated string to be included in html.
-	**/
-	function dateToDashString(date) {
-		var day = date.getDate();
-		var month = date.getMonth() + 1;
-		var year = date.getFullYear();
-		if (day < 10) {
-			day = "0" + day
-		}
-		if (month < 10) {
-			month = "0" + month;
-		}
-		var dateString = year + "-" + month + "-" + day;
-		return dateString;
+**/
+function dateToDashString(date) {
+	var day = date.getDate();
+	var month = date.getMonth() + 1;
+	var year = date.getFullYear();
+	if (day < 10) {
+		day = "0" + day
 	}
+	if (month < 10) {
+		month = "0" + month;
+	}
+	var dateString = year + "-" + month + "-" + day;
+	return dateString;
+}

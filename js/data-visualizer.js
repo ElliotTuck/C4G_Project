@@ -1,11 +1,6 @@
 /**
-Create and display a bar chart showing the number of made/missed calls per year.
-
-Inputs:
-callDataPerYear: array of call data objects, indexed by year, including one entry per
-	each year of the aggregate call data
-jsonWorkbookEntries: JSON object of all the Excel entries
-*/
+	Create and display a bar chart showing the number of made/missed calls per year.
+**/
 function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries) {
 
 	/*********************/
@@ -254,13 +249,8 @@ function visualizeYearLevel(callDataPerYear, jsonWorkbookEntries) {
 }
 
 /**
-Create and display a bar chart showing the number of made/missed calls per month.
-
-Inputs:
-callDataPerMonth: array of call data objects, indexed by month, including an entry for
-	all months of the year for each element of years
-jsonWorkbookEntries: JSON object of all the Excel entries
-*/
+	Create and display a bar chart showing the number of made/missed calls per month.
+**/
 function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, year) {
 
 	/*********************/
@@ -489,7 +479,9 @@ function visualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries, year) {
 		.call(xAxis);
 }
 
-// Revisualize the month-level data.
+/**
+	Revisualize the month-level data.
+**/
 function revisualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries) {
 	var width = window.innerWidth - 100,
 		height = window.innerHeight / 2,
@@ -544,15 +536,8 @@ function revisualizeMonthLevel(callDataPerMonth, jsonWorkbookEntries) {
 }
 
 /**
-Create and display a bar chart showing the number of made/missed calls per day in a selected
-month.
-
-Inputs:
-callDataPerDay: array of call data objects, indexed by day, including an entry for all
-	days of the month for each element of years
-jsonWorkbookEntries: JSON object of all the Excel entries
-year: the year of the selected data
-*/
+	Create and display a bar chart showing the number of made/missed calls per day in a selected month.
+**/
 function visualizeDayLevel(callDataPerDay, jsonWorkbookEntries, month, year) {
 
 	/*********************/
@@ -794,15 +779,10 @@ function revisualizeDayLevel(callDataPerDay, jsonWorkbookEntries) {
 }
 
 /**
-Create and display a bar chart showing the number of made/missed calls per hour in a selected
-day. If there is more than one year of data, then the daily charts for each year will be 
-displayed side by side.
-
-Inputs:
-callDataPerHour: array of call data objects, indexed by day, including an entry for all
-	hours in a day for each year
-jsonWorkbookEntries: JSON object of all the Excel entries
-*/
+	Create and display a bar chart showing the number of made/missed calls per hour in a selected
+	day. If there is more than one year of data, then the daily charts for each year will be 
+	displayed side by side.
+**/
 function visualizeHourLevel(callDataPerHour, jsonWorkbookEntries) {
 
 	/*********************/
@@ -971,15 +951,15 @@ function revisualizeHourLevel(callDataPerHour, jsonWorkbookEntries) {
 }
 
 /**
-Check whether there is a lower-level visualization currently being displayed for
-any of the entries in the given array.
+	Check whether there is a lower-level visualization currently being displayed for
+	any of the entries in the given array.
 
-Inputs:
-callData: array of call data objects to search through
+	Input:
+	callData: array of call data objects to search through
 
-Outputs:
-returns true if a lower-level visualization exists, false otherwise
-*/
+	Output:
+	returns true if a lower-level visualization exists, false otherwise
+**/
 function checkIfAnyExpanded(callData) {
 	for (var i = 0; i < callData.length; i++) {
 		if (callData[i].expanded) {
@@ -990,11 +970,11 @@ function checkIfAnyExpanded(callData) {
 }
 
 /**
-Set expanded to false for all entries in the given array.
+	Set expanded to false for all entries in the given array.
 
-Inputs:
-callData: array of call data objects to go through
-*/
+	Inputs:
+	callData: array of call data objects to go through
+**/
 function clearExpanded(callData) {
 	if (!callData) {
 		return;
