@@ -1,45 +1,47 @@
 <!DOCTYPE html>
 <html lang="en-US">
-<head>
-	<meta charset="utf-8">
-	<title>C4G Application</title>
-	<link type="text/css" rel="stylesheet" href="css/style.css">
-	<link href="https://fonts.googleapis.com/css?family=Rubik" rel="stylesheet">
-</head>
+	<head>
+		<meta charset="utf-8">
+		<title>C4G Application</title>
+		<link type="text/css" rel="stylesheet" href="css/style.css">
+		<link href="https://fonts.googleapis.com/css?family=Rubik" rel="stylesheet">
+	</head>
 
-<body>
-	<!-- drag and drop field -->
-	<hr>
-	<div id="drop-area">
-		Drag and drop your Excel file here.
-	</div>
-	<output id="list"></output>
-	<hr>
-
-	<!-- months form -->
-	<div id="options">
-		<h1>Choose your options:</h1>
-		<div id="months-options">
-			<h2 id="months-title">Months</h2>
-			<form id="months-form">
-				<div id="left-months">
-					<input type="checkbox" id="January">January<br>
-					<input type="checkbox" id="February">February<br>
-					<input type="checkbox" id="March">March<br>
-					<input type="checkbox" id="April">April<br>
-					<input type="checkbox" id="May">May<br>
-					<input type="checkbox" id="June">June
-				</div>
-				<div id="right-months">
-					<input type="checkbox" id="July">July<br>
-					<input type="checkbox" id="August">August<br>
-					<input type="checkbox" id="September">September<br>
-					<input type="checkbox" id="October">October<br>
-					<input type="checkbox" id="November">November<br>
-					<input type="checkbox" id="December">December
-				</div>
-			</form>
+	<body>
+		<!-- drag and drop field -->
+		<hr>
+		<div id="drop-area">
+			Drag and drop your Excel file here.
 		</div>
+		<output id="list"></output>
+		<hr>
+
+		<!-- months form -->
+		<div id="options">
+			<h1>Choose your options:</h1>
+			<div id="months-options">
+				<h2 id="months-title">Months</h2>
+				<form id="months-form">
+					<div id="left-months">
+						<input type="checkbox" id="January">January<br>
+						<input type="checkbox" id="February">February<br>
+						<input type="checkbox" id="March">March<br>
+						<input type="checkbox" id="April">April<br>
+						<input type="checkbox" id="May">May<br>
+						<input type="checkbox" id="June">June
+					</div>
+					<div id="right-months">
+						<input type="checkbox" id="July">July<br>
+						<input type="checkbox" id="August">August<br>
+						<input type="checkbox" id="September">September<br>
+						<input type="checkbox" id="October">October<br>
+						<input type="checkbox" id="November">November<br>
+						<input type="checkbox" id="December">December
+					</div>
+				</form>
+			</div>
+
+		<!-- custom date range options -->
 		<div id="custom-date-range-options">
 			<h2>Custom Range</h2>
 			<div id="custom-range-form-div">
@@ -55,6 +57,8 @@
 				</form>
 			</div>
 		</div>
+
+		<!-- missed call rule -->
 		<div id="missed-call-rule-options">
 			<h2>Missed Call Rule</h2>
 			<form id="missed-call-rule-form">
@@ -95,4 +99,4 @@
 		<script type="text/javascript" src="js/data-visualizer.js"></script>
 		<script type="text/javascript" src="js/main.js"></script>
 	</body>
-	</html>
+</html>
